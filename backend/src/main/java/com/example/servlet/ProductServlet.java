@@ -37,14 +37,15 @@ public class ProductServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setCorsHeaders(resp);
         resp.setContentType("application/json");
-        String productId = req.getParameter("productId");
-        String productName = req.getParameter("productName");
-        String productPrice = req.getParameter("productPrice");
 
-        Product product = new Product(productId, productName, Double.parseDouble(productPrice));
+        // Read the request body
+        ObjectMapper mapper = new ObjectMapper();
+        Product product = mapper.readValue(req.getInputStream(), Product.class);
+
+        // Add the product to the list
         products.add(product);
 
-        ObjectMapper mapper = new ObjectMapper();
+        // Write the response
         resp.getWriter().write(mapper.writeValueAsString(product));
     }
 
@@ -55,8 +56,9 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void setCorsHeaders(HttpServletResponse resp) {
-        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Allow requests from this origin
         resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        resp.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        resp.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
     }
 }

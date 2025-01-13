@@ -8,39 +8,36 @@ function ProductList() {
     const [productPrice, setProductPrice] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:8080/products')
+        axios.get('http://localhost:8080/products', { withCredentials: true })
             .then(response => setProducts(response.data))
             .catch(error => console.error('Error fetching products:', error));
     }, []);
 
     const handleAddToCart = (productId) => {
-        axios.post('http://localhost:8080/cart', { productId })
+        axios.post(`http://localhost:8080/cart?productId=${productId}`, {}, { withCredentials: true })
             .then(response => console.log(response.data))
             .catch(error => console.error('Error adding product to cart:', error));
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const formData = new FormData();
-        formData.append('productId', productId);
-        formData.append('productName', productName);
-        formData.append('productPrice', productPrice);
+        const product = {
+            id: productId,
+            name: productName,
+            price: parseFloat(productPrice)
+        };
 
-        fetch('http://localhost:8080/products', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            setProducts([...products, data]);
-            setProductId('');
-            setProductName('');
-            setProductPrice('');
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        axios.post('http://localhost:8080/products', product, { withCredentials: true })
+            .then(response => {
+                console.log('Success:', response.data);
+                setProducts([...products, response.data]);
+                setProductId('');
+                setProductName('');
+                setProductPrice('');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
     };
 
     const handleButtonClick = (productId) => {
@@ -59,6 +56,7 @@ function ProductList() {
                     value={productId}
                     onChange={(e) => setProductId(e.target.value)}
                     required
+                    autoComplete="off"
                 />
                 <br />
                 <label htmlFor="productName">Product Name:</label>
@@ -69,6 +67,7 @@ function ProductList() {
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     required
+                    autoComplete="off"
                 />
                 <br />
                 <label htmlFor="productPrice">Product Price:</label>
@@ -79,6 +78,7 @@ function ProductList() {
                     value={productPrice}
                     onChange={(e) => setProductPrice(e.target.value)}
                     required
+                    autoComplete="off"
                 />
                 <br />
                 <button type="submit">Submit</button>
