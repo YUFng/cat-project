@@ -16,6 +16,8 @@ function Login() {
                     window.location.href = '/admin';
                 } else if (data.userType === 'user') {
                     window.location.href = '/user';
+                } else {
+                    setMessage('Authentication failed');
                 }
             })
             .catch(error => setMessage('Error: ' + error.message));

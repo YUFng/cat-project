@@ -1,8 +1,10 @@
 package com.example.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,18 +13,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.model.Product;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet("/products")
 public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    final private List<Product> products = new ArrayList<>();
+    private List<Product> products;
 
     public ProductServlet() {
-        // Prepopulate with some example data
-        products.add(new Product("1", "Product A", 10.99));
-        products.add(new Product("2", "Product B", 20.99));
-        products.add(new Product("3", "Product C", 30.99));
+        try {
+            // Read products from JSON file
+            byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
+            ObjectMapper objectMapper = new ObjectMapper();
+            products = objectMapper.readValue(jsonData, new TypeReference<List<Product>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -47,6 +54,38 @@ public class ProductServlet extends HttpServlet {
 
         // Write the response
         resp.getWriter().write(mapper.writeValueAsString(product));
+
+        // Save the updated product list to the JSON file
+        try {
+            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        setCorsHeaders(resp);
+        resp.setContentType("application/json");
+
+        // Get the product ID from the request
+        String productId = req.getParameter("id");
+
+        // Remove the product from the list
+        products = products.stream()
+                .filter(product -> !product.getId().equals(productId))
+                .collect(Collectors.toList());
+
+        // Write the response
+        ObjectMapper mapper = new ObjectMapper();
+        resp.getWriter().write("{\"message\": \"Product removed\"}");
+
+        // Save the updated product list to the JSON file
+        try {
+            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

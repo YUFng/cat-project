@@ -6,11 +6,16 @@ function AdminProductList() {
     const [productId, setProductId] = useState('');
     const [productName, setProductName] = useState('');
     const [productPrice, setProductPrice] = useState('');
+    const [productDescription, setProductDescription] = useState('');
+    const [productCategory, setProductCategory] = useState('');
 
     useEffect(() => {
         axios.get('http://localhost:8080/products', { withCredentials: true })
             .then(response => setProducts(response.data))
-            .catch(error => console.error('Error fetching products:', error));
+            .catch(error => {
+                console.error('Error fetching products:', error);
+                setProducts([]); // Ensure products is an array even if fetching fails
+            });
     }, []);
 
     const handleSubmit = (event) => {
@@ -18,7 +23,9 @@ function AdminProductList() {
         const product = {
             id: productId,
             name: productName,
-            price: parseFloat(productPrice)
+            price: parseFloat(productPrice),
+            description: productDescription,
+            category: productCategory
         };
 
         axios.post('http://localhost:8080/products', product, { withCredentials: true })
@@ -28,9 +35,22 @@ function AdminProductList() {
                 setProductId('');
                 setProductName('');
                 setProductPrice('');
+                setProductDescription('');
+                setProductCategory('');
             })
             .catch((error) => {
                 console.error('Error:', error);
+            });
+    };
+
+    const handleRemove = (productId) => {
+        axios.delete(`http://localhost:8080/products?id=${productId}`, { withCredentials: true })
+            .then(response => {
+                console.log('Product removed:', response.data);
+                setProducts(products.filter(product => product.id !== productId));
+            })
+            .catch(error => {
+                console.error('Error removing product:', error);
             });
     };
 
@@ -70,15 +90,45 @@ function AdminProductList() {
                     autoComplete="off"
                 />
                 <br />
+                <label htmlFor="productDescription">Product Description:</label>
+                <input
+                    type="text"
+                    id="productDescription"
+                    name="productDescription"
+                    value={productDescription}
+                    onChange={(e) => setProductDescription(e.target.value)}
+                    required
+                    autoComplete="off"
+                />
+                <br />
+                <label htmlFor="productCategory">Product Category:</label>
+                <input
+                    type="text"
+                    id="productCategory"
+                    name="productCategory"
+                    value={productCategory}
+                    onChange={(e) => setProductCategory(e.target.value)}
+                    required
+                    autoComplete="off"
+                />
+                <br />
                 <button type="submit">Submit</button>
             </form>
             <div>
-                {products.map(product => (
-                    <div key={product.id}>
-                        <h2>{product.name}</h2>
-                        <p>Price: ${product.price}</p>
-                    </div>
-                ))}
+                <h2>Shopping Cart</h2>
+                {products && products.length === 0 ? (
+                    <p>No products available.</p>
+                ) : (
+                    products && products.map(product => (
+                        <div key={product.id}>
+                            <h2>{product.name}</h2>
+                            <p>Price: ${product.price}</p>
+                            <p>Description: {product.description}</p>
+                            <p>Category: {product.category}</p>
+                            <button onClick={() => handleRemove(product.id)}>Remove</button>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

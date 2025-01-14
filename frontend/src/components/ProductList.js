@@ -7,12 +7,21 @@ function ProductList() {
 
     useEffect(() => {
         axios.get('http://localhost:8080/products', { withCredentials: true })
-            .then(response => setProducts(response.data))
-            .catch(error => console.error('Error fetching products:', error));
+            .then(response => {
+                console.log('Products fetched:', response.data); // Debugging log
+                setProducts(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+                setProducts([]); // Ensure products is an array even if fetching fails
+            });
 
         axios.get('http://localhost:8080/cart', { withCredentials: true })
             .then(response => setCart(response.data))
-            .catch(error => console.error('Error fetching cart:', error));
+            .catch(error => {
+                console.error('Error fetching cart:', error);
+                setCart([]); // Ensure cart is an array even if fetching fails
+            });
     }, []);
 
     const handleAddToCart = (productId) => {
@@ -37,13 +46,19 @@ function ProductList() {
         <div>
             <h2>Product List</h2>
             <div>
-                {products.map(product => (
-                    <div key={product.id}>
-                        <h2>{product.name}</h2>
-                        <p>Price: ${product.price}</p>
-                        <button onClick={() => handleAddToCart(product.id)}>Add to Cart</button>
-                    </div>
-                ))}
+                {products && products.length > 0 ? (
+                    products.map(product => (
+                        <div key={product.id}>
+                            <h2>{product.name}</h2>
+                            <p>Price: ${product.price}</p>
+                            <p>Description: {product.description}</p>
+                            <p>Category: {product.category}</p>
+                            <button onClick={() => handleAddToCart(product.id)}>Add to Cart</button>
+                        </div>
+                    ))
+                ) : (
+                    <p>No products available.</p>
+                )}
             </div>
             <h2>Shopping Cart</h2>
             <div>
