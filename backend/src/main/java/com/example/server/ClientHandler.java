@@ -18,11 +18,23 @@ public class ClientHandler implements Runnable {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
             String line;
+            StringBuilder request = new StringBuilder();
             while ((line = in.readLine()) != null) {
                 if (line.isEmpty()) break;
-                System.out.println(line);
+                request.append(line).append("\n");
             }
-            String response = "<html><body><h1>Welcome to the E-Commerce Website</h1></body></html>";
+            String requestLine = request.toString().split("\n")[0];
+            String path = requestLine.split(" ")[1];
+
+            String response;
+            if (path.equals("/admin")) {
+                response = "<html><body><h1>Admin Dashboard</h1></body></html>";
+            } else if (path.equals("/user")) {
+                response = "<html><body><h1>User Dashboard</h1></body></html>";
+            } else {
+                response = "<html><body><h1>Welcome to the E-Commerce Website</h1></body></html>";
+            }
+
             out.println("HTTP/1.1 200 OK");
             out.println("Content-Type: text/html");
             out.println("Content-Length: " + response.length());

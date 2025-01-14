@@ -18,9 +18,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        setCorsHeaders(response);
 
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> requestBody = mapper.readValue(request.getInputStream(), new TypeReference<Map<String, String>>() {});
@@ -29,17 +27,17 @@ public class UserServlet extends HttpServlet {
 
         // Authentication logic
         if ("admin".equals(username) && "admin123".equals(password)) {
-            response.getWriter().write("User authenticated: " + username);
+            response.getWriter().write("{\"message\": \"User authenticated\", \"userType\": \"admin\"}");
+        } else if ("user".equals(username) && "user123".equals(password)) {
+            response.getWriter().write("{\"message\": \"User authenticated\", \"userType\": \"user\"}");
         } else {
-            response.getWriter().write("Authentication failed");
+            response.getWriter().write("{\"message\": \"Authentication failed\"}");
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        setCorsHeaders(response);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

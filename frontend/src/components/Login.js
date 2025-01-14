@@ -9,7 +9,15 @@ function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         axios.post('http://localhost:8080/user', { username, password })
-            .then(response => setMessage(response.data))
+            .then(response => {
+                const data = response.data;
+                setMessage(data.message);
+                if (data.userType === 'admin') {
+                    window.location.href = '/admin';
+                } else if (data.userType === 'user') {
+                    window.location.href = '/user';
+                }
+            })
             .catch(error => setMessage('Error: ' + error.message));
     };
 
