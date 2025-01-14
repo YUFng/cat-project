@@ -1,1 +1,108 @@
-[{"id":"1","name":"Rustic Floral Arrangement","price":25.99,"description":"Beautiful rustic floral arrangement perfect for weddings and events.","category":"rustic"},{"id":"2","name":"Elegant Tableware Set","price":45.99,"description":"Elegant tableware set for a sophisticated event.","category":"elegant"},{"id":"3","name":"Custom Banner","price":15.99,"description":"Personalized banner for your special event.","category":"custom"}]
+[
+    {
+      "id": "1",
+      "name": "Rustic Floral Arrangement",
+      "price": 25.99,
+      "description": "Beautiful rustic floral arrangement perfect for weddings and events.",
+      "category": "rustic"
+    },
+    {
+      "id": "2",
+      "name": "Elegant Tableware Set",
+      "price": 45.99,
+      "description": "Elegant tableware set for a sophisticated event.",
+      "category": "elegant"
+    },
+    {
+      "id": "3",
+      "name": "Custom Banner",
+      "price": 15.99,
+      "description": "Personalized banner for your special event.",
+      "category": "custom"
+    },
+    {
+      "id": "4",
+      "name": "Rustic Mason Jar Centerpieces",
+      "price": 18.99,
+      "description": "Charming mason jar centerpieces with a rustic design.",
+      "category": "rustic"
+    },
+    {
+      "id": "5",
+      "name": "Elegant Candle Holders",
+      "price": 29.99,
+      "description": "Sophisticated candle holders for elegant table settings.",
+      "category": "elegant"
+    },
+    {
+      "id": "6",
+      "name": "Custom Photo Booth Backdrop",
+      "price": 50.00,
+      "description": "Personalized photo booth backdrop with customizable text and design.",
+      "category": "custom"
+    },
+    {
+      "id": "7",
+      "name": "Rustic Wooden Table Numbers",
+      "price": 12.50,
+      "description": "Wooden table numbers with a rustic charm.",
+      "category": "rustic"
+    },
+    {
+      "id": "8",
+      "name": "Elegant Crystal Glasses Set",
+      "price": 35.99,
+      "description": "Crystal glasses set for upscale dining experiences.",
+      "category": "elegant"
+    },
+    {
+      "id": "9",
+      "name": "Custom Wedding Invitations",
+      "price": 75.00,
+      "description": "Beautifully designed wedding invitations tailored to your event theme.",
+      "category": "custom"
+    },
+    {
+      "id": "10",
+      "name": "Rustic Burlap Table Runners",
+      "price": 15.99,
+      "description": "Stylish burlap table runners for a rustic-themed event.",
+      "category": "rustic"
+    },
+    {
+      "id": "11",
+      "name": "Elegant Chair Covers",
+      "price": 8.99,
+      "description": "Luxurious chair covers to enhance your event decor.",
+      "category": "elegant"
+    },
+    {
+      "id": "12",
+      "name": "Custom Cake Topper",
+      "price": 19.99,
+      "description": "Personalized cake topper to match your event's theme.",
+      "category": "custom"
+    },
+    {
+      "id": "13",
+      "name": "Rustic Wooden Signage",
+      "price": 30.00,
+      "description": "Handcrafted wooden signage for directional or decorative purposes.",
+      "category": "rustic"
+    },
+    {
+      "id": "14",
+      "name": "Elegant Lace Tablecloth",
+      "price": 60.00,
+      "description": "Exquisite lace tablecloth for an elegant dining experience.",
+      "category": "elegant"
+    },
+    {
+      "id": "15",
+      "name": "Custom Party Favors",
+      "price": 2.50,
+      "description": "Personalized party favors for guests to take home.",
+      "category": "custom"
+    }
+  ]
+  

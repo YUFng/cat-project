@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../styles/AdminProductList.css'; // Import the CSS file for styling
 
 function AdminProductList() {
     const [products, setProducts] = useState([]);
@@ -55,8 +56,9 @@ function AdminProductList() {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <div className="container">
+            <h2>Admin Product List</h2>
+            <form onSubmit={handleSubmit} className="product-form">
                 <label htmlFor="productId">Product ID:</label>
                 <input
                     type="text"
@@ -67,7 +69,6 @@ function AdminProductList() {
                     required
                     autoComplete="off"
                 />
-                <br />
                 <label htmlFor="productName">Product Name:</label>
                 <input
                     type="text"
@@ -78,7 +79,6 @@ function AdminProductList() {
                     required
                     autoComplete="off"
                 />
-                <br />
                 <label htmlFor="productPrice">Product Price:</label>
                 <input
                     type="number"
@@ -89,7 +89,6 @@ function AdminProductList() {
                     required
                     autoComplete="off"
                 />
-                <br />
                 <label htmlFor="productDescription">Product Description:</label>
                 <input
                     type="text"
@@ -100,7 +99,6 @@ function AdminProductList() {
                     required
                     autoComplete="off"
                 />
-                <br />
                 <label htmlFor="productCategory">Product Category:</label>
                 <input
                     type="text"
@@ -111,16 +109,14 @@ function AdminProductList() {
                     required
                     autoComplete="off"
                 />
-                <br />
                 <button type="submit">Submit</button>
             </form>
-            <div>
-                <h2>Shopping Cart</h2>
+            <div className="product-grid">
                 {products && products.length === 0 ? (
                     <p>No products available.</p>
                 ) : (
                     products && products.map(product => (
-                        <div key={product.id}>
+                        <div key={product.id} className="product-card">
                             <h2>{product.name}</h2>
                             <p>Price: ${product.price}</p>
                             <p>Description: {product.description}</p>

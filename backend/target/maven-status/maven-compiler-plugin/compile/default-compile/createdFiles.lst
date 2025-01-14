@@ -3,6 +3,7 @@ com\example\model\Product.class
 com\example\servlet\UserServlet$1.class
 com\example\servlet\CartServlet.class
 com\example\servlet\ProductServlet$1.class
+com\example\servlet\CartServlet$1.class
 com\example\server\Server.class
 com\example\server\ClientHandler.class
 com\example\servlet\ProductServlet.class
