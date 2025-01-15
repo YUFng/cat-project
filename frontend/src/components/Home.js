@@ -42,10 +42,6 @@ function Home() {
                     </div>
                 </div>
             </div>
-
-            <footer className="footer">
-                © 2025 Wedding E-Commerce. All rights reserved.
-            </footer>
         </div>
     );
 }
