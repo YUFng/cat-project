@@ -73,7 +73,7 @@ public class ProductServlet extends HttpServlet {
 
         // Remove the product from the list
         products = products.stream()
-                .filter(product -> !product.getId().equals(productId))
+                .filter(product -> product.getId() != Integer.parseInt(productId))
                 .collect(Collectors.toList());
 
         // Write the response

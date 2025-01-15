@@ -1,18 +1,27 @@
 package com.example.model;
 
 public class Product {
-    private String id;
+    private int id;
     private String name;
     private double price;
     private String description;
     private String category;
 
-    // Getters and setters
-    public String getId() {
+    public Product() {}
+
+    public Product(int id, String name, double price, String description, String category) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.category = category;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
