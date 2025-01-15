@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../components/AuthContext';
 import '../styles/Login.css'; // Import the CSS file for styling
 
 function Login() {
@@ -8,6 +9,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -16,9 +18,11 @@ function Login() {
                 const data = response.data;
                 setMessage(data.message);
                 if (data.userType === 'admin') {
-                    window.location.href = '/admin';
+                    login({ username, password, userType: 'admin' });
+                    navigate('/admin');
                 } else if (data.userType === 'user') {
-                    window.location.href = '/';
+                    login({ username, password, userType: 'user' });
+                    navigate('/');
                 } else {
                     setMessage('Authentication failed');
                 }
@@ -52,6 +56,7 @@ function Login() {
             </form>
             {message && <p>{message}</p>}
             <div className="auth-buttons">
+                <p>Don't have an account?</p>
                 <button onClick={() => navigate('/signup')}>Sign Up</button>
             </div>
         </div>

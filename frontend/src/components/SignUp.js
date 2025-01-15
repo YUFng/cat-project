@@ -51,6 +51,7 @@ function SignUp() {
             </form>
             {message && <p>{message}</p>}
             <div className="auth-buttons">
+                <p>Already have an account?</p>
                 <button onClick={() => navigate('/login')}>Log In</button>
             </div>
         </div>

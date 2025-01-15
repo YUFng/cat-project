@@ -8,28 +8,33 @@ import Admin from './components/Admin';
 import AboutUs from './components/AboutUs';
 import EventPlanningGuide from './components/EventPlanningGuide';
 import Header from './components/Header';
+import UserProfile from './components/UserProfile';
+import { AuthProvider } from './components/AuthContext';
 import './styles.css'; // Import the CSS file for styling
 
 function App() {
     return (
-        <Router>
-            <Header />
-            <div className="container">
-                <h1>Welcome to the Wedding E-Commerce Website</h1>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/products" element={<ProductList />} />
-                    <Route path="/about-us" element={<AboutUs />} />
-                    <Route path="/event-planning-guide" element={<EventPlanningGuide />} />
-                    <Route path="/admin" element={<Admin />} />
-                </Routes>
-            </div>
-            <footer className="footer">
-                © 2025 Wedding E-Commerce. All rights reserved.
-            </footer>
-        </Router>
+        <AuthProvider>
+            <Router>
+                <Header />
+                <div className="container">
+                    <h1>Welcome to the Wedding E-Commerce Website</h1>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<SignUp />} />
+                        <Route path="/products" element={<ProductList />} />
+                        <Route path="/about-us" element={<AboutUs />} />
+                        <Route path="/event-planning-guide" element={<EventPlanningGuide />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/profile" element={<UserProfile />} />
+                    </Routes>
+                </div>
+                <footer className="footer">
+                    © 2025 Wedding E-Commerce. All rights reserved.
+                </footer>
+            </Router>
+        </AuthProvider>
     );
 }
 
