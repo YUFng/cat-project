@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Cart.css'; // Import the CSS file for styling
 
 function Cart() {
     const [cart, setCart] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get('http://localhost:8080/cart', { withCredentials: true })
@@ -21,6 +23,10 @@ function Cart() {
                 setCart(cart.filter(item => item.id !== productId));
             })
             .catch(error => console.error('Error removing product:', error));
+    };
+
+    const handleBuyNow = () => {
+        navigate('/payment');
     };
 
     return (
@@ -41,6 +47,9 @@ function Cart() {
                     ))
                 )}
             </div>
+            {cart.length > 0 && (
+                <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
+            )}
         </div>
     );
 }

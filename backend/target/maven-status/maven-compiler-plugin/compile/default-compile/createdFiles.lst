@@ -1,10 +1,16 @@
+com\example\model\Cart.class
+com\example\servlet\AddressServlet.class
 com\example\server\Server.class
+com\example\servlet\AddressServlet$2.class
 com\example\server\ClientHandler.class
+com\example\servlet\OrderServlet.class
 com\example\servlet\ProductServlet.class
 com\example\servlet\UserServlet.class
 com\example\model\Product.class
+com\example\servlet\AddressServlet$1.class
+com\example\model\Order.class
 com\example\servlet\UserServlet$1.class
 com\example\servlet\CartServlet.class
+com\example\servlet\OrderServlet$1.class
 com\example\servlet\ProductServlet$1.class
-com\example\servlet\CartServlet$1.class
 com\example\model\User.class

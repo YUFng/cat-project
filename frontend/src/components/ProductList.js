@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../components/AuthContext';
 import '../styles/ProductList.css'; // Import the CSS file for styling
 
 function ProductList() {
+    const { user } = useContext(AuthContext);
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get('http://localhost:8080/products', { withCredentials: true })
@@ -19,16 +23,23 @@ function ProductList() {
                 setProducts([]); // Ensure products is an array even if fetching fails
             });
 
-        axios.get('http://localhost:8080/cart', { withCredentials: true })
-            .then(response => setCart(response.data))
-            .catch(error => {
-                console.error('Error fetching cart:', error);
-                setCart([]); // Ensure cart is an array even if fetching fails
-            });
-    }, []);
+        if (user) {
+            axios.get(`http://localhost:8080/cart?username=${user.username}`, { withCredentials: true })
+                .then(response => setCart(response.data))
+                .catch(error => {
+                    console.error('Error fetching cart:', error);
+                    setCart([]); // Ensure cart is an array even if fetching fails
+                });
+        }
+    }, [user]);
 
     const handleAddToCart = (product) => {
-        axios.post('http://localhost:8080/cart', product, { withCredentials: true })
+        if (!user) {
+            alert('Please log in to add items to your cart.');
+            return;
+        }
+
+        axios.post('http://localhost:8080/cart', { username: user.username, ...product }, { withCredentials: true })
             .then(response => {
                 console.log(response.data);
                 setCart([...cart, product]);
@@ -37,7 +48,12 @@ function ProductList() {
     };
 
     const handleRemoveFromCart = (productId) => {
-        axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
+        if (!user) {
+            alert('Please log in to remove items from your cart.');
+            return;
+        }
+
+        axios.delete(`http://localhost:8080/cart?username=${user.username}&productId=${productId}`, { withCredentials: true })
             .then(response => {
                 console.log('Product removed:', response.data);
                 setCart(cart.filter(item => item && item.id !== productId));
@@ -59,6 +75,10 @@ function ProductList() {
             (selectedCategory === '' || product.category === selectedCategory)
         );
     });
+
+    const handleBuyNow = () => {
+        navigate('/payment');
+    };
 
     return (
         <div className="container">
@@ -108,6 +128,9 @@ function ProductList() {
                     ))
                 )}
             </div>
+            {cart.length > 0 && (
+                <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
+            )}
         </div>
     );
 }
