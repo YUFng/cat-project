@@ -17,22 +17,21 @@ function Payment() {
             return;
         }
 
-        axios.get(`http://localhost:8080/cart?username=${user.username}`, { withCredentials: true })
+        axios.get('http://localhost:8080/cart', { withCredentials: true })
             .then(response => {
                 setCart(response.data);
             })
             .catch(error => console.error('Error fetching cart:', error));
 
-        axios.get(`http://localhost:8080/user/address?username=${user.username}`, { withCredentials: true })
+        axios.get('http://localhost:8080/user/address', { withCredentials: true })
             .then(response => {
-                setAddress(response.data[user.username]);
+                setAddress(response.data.address);
             })
             .catch(error => console.error('Error fetching address:', error));
     }, [user, navigate]);
 
     const handlePayNow = () => {
         const order = {
-            username: user.username,
             address,
             products: cart,
             paymentMethod
@@ -41,7 +40,21 @@ function Payment() {
         axios.post('http://localhost:8080/orders', order, { withCredentials: true })
             .then(response => {
                 alert('Payment successful!');
-                navigate('/');
+                setCart([]); // Clear the cart state on the frontend
+                axios.delete('http://localhost:8080/cart', { withCredentials: true }) // Clear the cart on the backend
+                    .then(() => {
+                        // Dispatch a custom event to notify the product list to update
+                        const event = new CustomEvent('updateProducts');
+                        window.dispatchEvent(event);
+                        navigate('/products'); // Redirect to the product page
+                    })
+                    .catch(error => {
+                        console.error('Error clearing cart:', error);
+                        // Dispatch a custom event to notify the product list to update
+                        const event = new CustomEvent('updateProducts');
+                        window.dispatchEvent(event);
+                        navigate('/products'); // Redirect to the product page
+                    });
             })
             .catch(error => {
                 alert('Error processing payment: ' + error.message);
@@ -60,8 +73,8 @@ function Payment() {
             <h2>Payment Page</h2>
             <div className="order-summary">
                 <h3>Order Summary</h3>
-                {cart.map(product => (
-                    <div key={product.id} className="product-summary">
+                {cart.map((product, index) => (
+                    <div key={`${product.id}-${index}`} className="product-summary">
                         <p><strong>{product.name}</strong></p>
                         <p>Price: ${product.price}</p>
                     </div>

@@ -4,16 +4,14 @@ import java.util.List;
 
 public class Order {
     private String id;
-    private String username;
     private String address;
     private List<Product> products;
     private String paymentMethod;
 
     public Order() {}
 
-    public Order(String id, String username, String address, List<Product> products, String paymentMethod) {
+    public Order(String id, String address, List<Product> products, String paymentMethod) {
         this.id = id;
-        this.username = username;
         this.address = address;
         this.products = products;
         this.paymentMethod = paymentMethod;
@@ -25,14 +23,6 @@ public class Order {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getAddress() {

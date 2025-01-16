@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../components/AuthContext';
 import '../styles/Cart.css'; // Import the CSS file for styling
 
 function Cart() {
+    const { user } = useContext(AuthContext);
     const [cart, setCart] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:8080/cart', { withCredentials: true })
-            .then(response => {
-                console.log('Cart data fetched:', response.data); // Debugging log
-                setCart(response.data);
-            })
-            .catch(error => console.error('Error fetching cart:', error));
-    }, []);
+        if (user) {
+            axios.get('http://localhost:8080/cart', { withCredentials: true })
+                .then(response => {
+                    console.log('Cart data fetched:', response.data); // Debugging log
+                    setCart(response.data);
+                })
+                .catch(error => console.error('Error fetching cart:', error));
+        }
+    }, [user]);
 
     const handleRemove = (productId) => {
-        axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
-            .then(response => {
-                console.log('Product removed:', response.data); // Debugging log
-                setCart(cart.filter(item => item.id !== productId));
-            })
-            .catch(error => console.error('Error removing product:', error));
+        if (user) {
+            axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
+                .then(response => {
+                    console.log('Product removed:', response.data); // Debugging log
+                    setCart(cart.filter(item => item.id !== productId));
+                })
+                .catch(error => console.error('Error removing product:', error));
+        }
     };
 
     const handleBuyNow = () => {

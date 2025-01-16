@@ -1,25 +1,17 @@
 package com.example.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
-    private String username;
     private List<Product> products;
 
     public Cart() {
+        this.products = new ArrayList<>();
     }
 
-    public Cart(String username, List<Product> products) {
-        this.username = username;
+    public Cart(List<Product> products) {
         this.products = products;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public List<Product> getProducts() {
@@ -28,5 +20,17 @@ public class Cart {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public void addProduct(Product product) {
+        this.products.add(product);
+    }
+
+    public void removeProduct(int productId) {
+        this.products.removeIf(product -> product.getId() == productId);
+    }
+
+    public void clear() {
+        this.products.clear();
     }
 }

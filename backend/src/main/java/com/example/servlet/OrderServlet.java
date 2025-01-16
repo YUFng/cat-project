@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,27 +13,33 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.model.Order;
 import com.example.model.Cart;
+import com.example.model.Order;
+import com.example.model.Product;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet("/orders")
 public class OrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private final CartServlet cartServlet;
     private List<Order> orders;
-    private CartServlet cartServlet;
+    private List<Product> products;
 
     public OrderServlet() {
         try {
             // Read orders from JSON file
             byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/orders.json"));
             ObjectMapper objectMapper = new ObjectMapper();
-            orders = objectMapper.readValue(jsonData, new TypeReference<List<Order>>() {
-            });
-        } catch (IOException e) {
+            orders = objectMapper.readValue(jsonData, new TypeReference<List<Order>>() {});
+
+            // Read products from JSON file
+            byte[] productData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
+            products = objectMapper.readValue(productData, new TypeReference<List<Product>>() {});
+        } catch (Exception e) {
             e.printStackTrace();
             orders = new ArrayList<>();
+            products = new ArrayList<>();
         }
         cartServlet = new CartServlet();
     }
@@ -49,17 +54,29 @@ public class OrderServlet extends HttpServlet {
         // Generate a unique order ID
         order.setId(UUID.randomUUID().toString());
 
-        // Get the cart for the user and transfer products to the order
-        Cart cart = cartServlet.getCart(order.getUsername());
+        // Get the cart for the session and transfer products to the order
+        String sessionId = request.getSession().getId();
+        Cart cart = cartServlet.getCart(sessionId);
         if (cart != null) {
             order.setProducts(cart.getProducts());
+            // Deduct inventory
+            for (Product cartProduct : cart.getProducts()) {
+                for (Product product : products) {
+                    if (product.getId() == cartProduct.getId()) {
+                        product.setInventory(product.getInventory() - cartProduct.getQuantity());
+                        System.out.println("Deducted inventory for product ID: " + product.getId() + ", new inventory: " + product.getInventory());
+                        break;
+                    }
+                }
+            }
         }
 
         orders.add(order);
         saveOrders();
+        saveProducts(); // Save the updated inventory before reloading it
 
-        // Clear the cart for the user
-        cartServlet.clearCart(order.getUsername());
+        // Clear the cart for the session
+        cartServlet.clearCart(sessionId);
 
         response.getWriter()
                 .write("{\"message\": \"Order saved successfully\", \"orderId\": \"" + order.getId() + "\"}");
@@ -71,15 +88,7 @@ public class OrderServlet extends HttpServlet {
         setCorsHeaders(response);
         response.setContentType("application/json");
 
-        String username = request.getParameter("username");
-        if (username != null) {
-            List<Order> userOrders = orders.stream()
-                    .filter(order -> order.getUsername().equals(username))
-                    .collect(Collectors.toList());
-            response.getWriter().write(new ObjectMapper().writeValueAsString(userOrders));
-        } else {
-            response.getWriter().write(new ObjectMapper().writeValueAsString(orders));
-        }
+        response.getWriter().write(new ObjectMapper().writeValueAsString(orders));
     }
 
     @Override
@@ -100,6 +109,16 @@ public class OrderServlet extends HttpServlet {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Files.write(Paths.get("src/main/resources/orders.json"), mapper.writeValueAsBytes(orders));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveProducts() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+            System.out.println("Products saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../components/AuthContext';
+import Payment from './Payment';
 import '../styles/ProductList.css'; // Import the CSS file for styling
 
 function ProductList() {
@@ -13,6 +14,34 @@ function ProductList() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        fetchProducts();
+        // Fetch cart if user is logged in
+        if (user) {
+            axios.get('http://localhost:8080/cart', { withCredentials: true })
+                .then(response => {
+                    console.log('Cart fetched:', response.data); // Debugging log
+                    setCart(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching cart:', error);
+                    setCart([]); // Ensure cart is an array even if fetching fails
+                });
+        }
+
+        // Listen for the custom event to update products
+        const updateProductsListener = () => {
+            fetchProducts();
+        };
+        window.addEventListener('updateProducts', updateProductsListener);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener('updateProducts', updateProductsListener);
+        };
+    }, [user]);
+
+    const fetchProducts = () => {
+        // Fetch products
         axios.get('http://localhost:8080/products', { withCredentials: true })
             .then(response => {
                 console.log('Products fetched:', response.data); // Debugging log
@@ -22,16 +51,7 @@ function ProductList() {
                 console.error('Error fetching products:', error);
                 setProducts([]); // Ensure products is an array even if fetching fails
             });
-
-        if (user) {
-            axios.get(`http://localhost:8080/cart?username=${user.username}`, { withCredentials: true })
-                .then(response => setCart(response.data))
-                .catch(error => {
-                    console.error('Error fetching cart:', error);
-                    setCart([]); // Ensure cart is an array even if fetching fails
-                });
-        }
-    }, [user]);
+    };
 
     const handleAddToCart = (product) => {
         if (!user) {
@@ -39,24 +59,38 @@ function ProductList() {
             return;
         }
 
-        axios.post('http://localhost:8080/cart', { username: user.username, ...product }, { withCredentials: true })
+        if (product.inventory <= 0) {
+            alert('This product is out of stock.');
+            return;
+        }
+    
+        axios.post('http://localhost:8080/cart', { product }, { withCredentials: true })
             .then(response => {
                 console.log(response.data);
-                setCart([...cart, product]);
+                setCart([...cart, { ...product, cartItemId: `${product.id}-${Date.now()}` }]);
+                setProducts(products.map(p => p.id === product.id ? { ...p, inventory: p.inventory - 1 } : p));
             })
-            .catch(error => console.error('Error adding product to cart:', error));
+            .catch(error => {
+                console.error('Error adding product to cart:', error);
+                if (error.response) {
+                    console.error('Error response data:', error.response.data);
+                }
+            });
     };
 
-    const handleRemoveFromCart = (productId) => {
+    const handleRemoveFromCart = (cartItemId) => {
         if (!user) {
             alert('Please log in to remove items from your cart.');
             return;
         }
 
-        axios.delete(`http://localhost:8080/cart?username=${user.username}&productId=${productId}`, { withCredentials: true })
+        const productId = cart.find(item => item.cartItemId === cartItemId).id;
+
+        axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
             .then(response => {
                 console.log('Product removed:', response.data);
-                setCart(cart.filter(item => item && item.id !== productId));
+                setCart(cart.filter(item => item.cartItemId !== cartItemId));
+                setProducts(products.map(p => p.id === productId ? { ...p, inventory: p.inventory + 1 } : p));
             })
             .catch(error => console.error('Error removing product:', error));
     };
@@ -99,12 +133,13 @@ function ProductList() {
             </div>
             <div className="product-grid">
                 {filteredProducts && filteredProducts.length > 0 ? (
-                    filteredProducts.map(product => (
-                        <div key={product.id} className="product-card">
+                    filteredProducts.map((product, index) => (
+                        <div key={`${product.id}-${index}`} className="product-card">
                             <h2>{product.name}</h2>
                             <p>Price: ${product.price}</p>
                             <p>Description: {product.description}</p>
                             <p>Category: {product.category}</p>
+                            <p>Inventory: {product.inventory}</p> {/* Display inventory */}
                             <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
                         </div>
                     ))
@@ -117,13 +152,13 @@ function ProductList() {
                 {cart.length === 0 ? (
                     <p>No products in the cart.</p>
                 ) : (
-                    cart.filter(item => item !== null).map(product => (
-                        <div key={product.id} className="product-card">
+                    cart.filter(item => item !== null).map((product, index) => (
+                        <div key={`${product.cartItemId}-${index}`} className="product-card">
                             <h2>{product.name}</h2>
                             <p>Price: ${product.price}</p>
                             <p>Description: {product.description}</p>
                             <p>Category: {product.category}</p>
-                            <button onClick={() => handleRemoveFromCart(product.id)}>Remove</button>
+                            <button onClick={() => handleRemoveFromCart(product.cartItemId)}>Remove</button>
                         </div>
                     ))
                 )}
@@ -131,6 +166,9 @@ function ProductList() {
             {cart.length > 0 && (
                 <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
             )}
+            <Routes>
+                <Route path="/payment" element={<Payment />} />
+            </Routes>
         </div>
     );
 }

@@ -1,11 +1,12 @@
 package com.example.servlet;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,49 +22,71 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private Map<String, Cart> userCarts = new HashMap<>();
+    private final Map<String, Cart> userCarts = new HashMap<>();
+    private List<Product> products;
+
+    public CartServlet() {
+        loadProducts();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         setCorsHeaders(response);
         ObjectMapper mapper = new ObjectMapper();
-        String username = request.getParameter("username");
-        Product product = mapper.readValue(request.getInputStream(), Product.class);
+        Map<String, Object> requestBody = mapper.readValue(request.getInputStream(), new TypeReference<Map<String, Object>>() {});
+        String sessionId = request.getSession().getId();
+        Product product = mapper.convertValue(requestBody.get("product"), Product.class);
 
-        if (username == null || username.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Username is required");
-            return;
+        userCarts.putIfAbsent(sessionId, new Cart());
+        userCarts.get(sessionId).addProduct(product);
+
+        // Deduct inventory
+        for (Product p : products) {
+            if (p.getId() == product.getId()) {
+                p.setInventory(p.getInventory() - 1);
+                break;
+            }
         }
 
-        userCarts.putIfAbsent(username, new Cart(username, new ArrayList<>()));
-        userCarts.get(username).getProducts().add(product);
+        // Save the updated product list to the JSON file
+        saveProducts();
 
-        response.getWriter().write("Product " + product.getId() + " added to cart for user " + username + ".");
+        response.getWriter().write("Product " + product.getId() + " added to cart.");
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         setCorsHeaders(response);
-        String username = request.getParameter("username");
+        String sessionId = request.getSession().getId();
         String productId = request.getParameter("productId");
 
-        if (username == null || username.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Username is required");
-            return;
-        }
-
-        if (userCarts.containsKey(username)) {
-            Cart cart = userCarts.get(username);
-            cart.setProducts(cart.getProducts().stream()
-                    .filter(product -> product.getId() != Integer.parseInt(productId))
-                    .collect(Collectors.toList()));
-            response.getWriter().write("Product " + productId + " removed from cart for user " + username + ".");
+        if (productId == null) {
+            // Clear the entire cart
+            userCarts.remove(sessionId);
+            response.getWriter().write("Cart cleared.");
         } else {
-            response.getWriter().write("No cart found for user " + username + ".");
+            // Remove a specific product from the cart
+            if (userCarts.containsKey(sessionId)) {
+                Cart cart = userCarts.get(sessionId);
+                cart.removeProduct(Integer.parseInt(productId));
+
+                // Restore inventory
+                for (Product p : products) {
+                    if (p.getId() == Integer.parseInt(productId)) {
+                        p.setInventory(p.getInventory() + 1);
+                        break;
+                    }
+                }
+
+                // Save the updated product list to the JSON file
+                saveProducts();
+
+                response.getWriter().write("Product " + productId + " removed from cart.");
+            } else {
+                response.getWriter().write("No cart found.");
+            }
         }
     }
 
@@ -72,16 +95,10 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         setCorsHeaders(response);
         response.setContentType("application/json");
-        String username = request.getParameter("username");
+        String sessionId = request.getSession().getId();
 
-        if (username == null || username.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Username is required");
-            return;
-        }
-
-        if (userCarts.containsKey(username)) {
-            response.getWriter().write(new ObjectMapper().writeValueAsString(userCarts.get(username).getProducts()));
+        if (userCarts.containsKey(sessionId)) {
+            response.getWriter().write(new ObjectMapper().writeValueAsString(userCarts.get(sessionId).getProducts()));
         } else {
             response.getWriter().write("[]");
         }
@@ -100,11 +117,31 @@ public class CartServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
     }
 
-    public Cart getCart(String username) {
-        return userCarts.get(username);
+    private void saveProducts() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void clearCart(String username) {
-        userCarts.remove(username);
+    private void loadProducts() {
+        try {
+            byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
+            ObjectMapper objectMapper = new ObjectMapper();
+            products = objectMapper.readValue(jsonData, new TypeReference<List<Product>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+            products = new ArrayList<>();
+        }
+    }
+
+    public Cart getCart(String sessionId) {
+        return userCarts.get(sessionId);
+    }
+
+    public void clearCart(String sessionId) {
+        userCarts.remove(sessionId);
     }
 }
