@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../components/AuthContext';
-import Payment from './Payment';
 import '../styles/ProductList.css'; // Import the CSS file for styling
 
 function ProductList() {
@@ -53,7 +52,7 @@ function ProductList() {
             });
     };
 
-    const handleAddToCart = (product) => {
+    const handleAddToCart = (product, quantity) => {
         if (!user) {
             alert('Please log in to add items to your cart.');
             return;
@@ -63,12 +62,14 @@ function ProductList() {
             alert('This product is out of stock.');
             return;
         }
-    
-        axios.post('http://localhost:8080/cart', { product }, { withCredentials: true })
+
+        axios.post('http://localhost:8080/cart', { product, quantity }, { withCredentials: true })
             .then(response => {
                 console.log(response.data);
-                setCart([...cart, { ...product, cartItemId: `${product.id}-${Date.now()}` }]);
-                setProducts(products.map(p => p.id === product.id ? { ...p, inventory: p.inventory - 1 } : p));
+                setCart([...cart, { ...product, cartItemId: `${product.id}-${Date.now()}`, quantity }]);
+                setProducts(products.map(p => p.id === product.id ? { ...p, inventory: p.inventory - quantity } : p));
+                // Dispatch custom event to update products
+                window.dispatchEvent(new Event('updateProducts'));
             })
             .catch(error => {
                 console.error('Error adding product to cart:', error);
@@ -91,6 +92,8 @@ function ProductList() {
                 console.log('Product removed:', response.data);
                 setCart(cart.filter(item => item.cartItemId !== cartItemId));
                 setProducts(products.map(p => p.id === productId ? { ...p, inventory: p.inventory + 1 } : p));
+                // Dispatch custom event to update products
+                window.dispatchEvent(new Event('updateProducts'));
             })
             .catch(error => console.error('Error removing product:', error));
     };
@@ -114,6 +117,10 @@ function ProductList() {
         navigate('/payment');
     };
 
+    const handleScrollToBottom = () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
     return (
         <div className="container">
             <h2>Product List</h2>
@@ -135,12 +142,20 @@ function ProductList() {
                 {filteredProducts && filteredProducts.length > 0 ? (
                     filteredProducts.map((product, index) => (
                         <div key={`${product.id}-${index}`} className="product-card">
+                            <img src={product.image} alt={product.name} className="product-image" />
                             <h2>{product.name}</h2>
                             <p>Price: ${product.price}</p>
                             <p>Description: {product.description}</p>
                             <p>Category: {product.category}</p>
                             <p>Inventory: {product.inventory}</p> {/* Display inventory */}
-                            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
+                            <input
+                                type="number"
+                                min="1"
+                                max={product.inventory}
+                                defaultValue="1"
+                                onChange={(e) => product.quantity = parseInt(e.target.value)}
+                            />
+                            <button onClick={() => handleAddToCart(product, product.quantity || 1)}>Add to Cart</button>
                         </div>
                     ))
                 ) : (
@@ -154,10 +169,12 @@ function ProductList() {
                 ) : (
                     cart.filter(item => item !== null).map((product, index) => (
                         <div key={`${product.cartItemId}-${index}`} className="product-card">
+                            <img src={product.image} alt={product.name} className="product-image" />
                             <h2>{product.name}</h2>
                             <p>Price: ${product.price}</p>
                             <p>Description: {product.description}</p>
                             <p>Category: {product.category}</p>
+                            <p>Quantity: {product.quantity}</p> {/* Display quantity */}
                             <button onClick={() => handleRemoveFromCart(product.cartItemId)}>Remove</button>
                         </div>
                     ))
@@ -166,9 +183,7 @@ function ProductList() {
             {cart.length > 0 && (
                 <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
             )}
-            <Routes>
-                <Route path="/payment" element={<Payment />} />
-            </Routes>
+            <button onClick={handleScrollToBottom} className="scroll-to-bottom-button">↓</button>
         </div>
     );
 }

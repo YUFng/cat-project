@@ -6,7 +6,6 @@ import SignUp from './components/SignUp';
 import ProductList from './components/ProductList';
 import Admin from './components/Admin';
 import AboutUs from './components/AboutUs';
-import EventPlanningGuide from './components/EventPlanningGuide';
 import Header from './components/Header';
 import UserProfile from './components/UserProfile';
 import Cart from './components/Cart';
@@ -47,7 +46,6 @@ function App() {
                         <Route path="/signup" element={<SignUp />} />
                         <Route path="/products/*" element={<ProductList />} />
                         <Route path="/about-us" element={<AboutUs />} />
-                        <Route path="/event-planning-guide" element={<EventPlanningGuide />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="/profile" element={<UserProfile />} />
                         <Route path="/cart" element={<Cart />} />
@@ -58,8 +56,61 @@ function App() {
                 {showBackToTop && (
                     <button onClick={handleBackToTop} className="back-to-top-button">↑</button>
                 )}
+                
                 <footer className="footer">
-                    © 2025 Wedding E-Commerce. All rights reserved.
+                    <div className="footer-container">
+                        <div className="footer-about">
+                            <div className="footer-logo">
+                                <img src="/images/logo.png" alt="Wedding E-Commerce Logo" className="website-logo"/>
+                            </div>
+                            <h2>About Us</h2>
+                            <p>
+                                "Wedding E-Commerce" is your ultimate destination for all your wedding needs.
+                                From wedding attire to decorations, we provide everything to make your special day unforgettable.
+                            </p>
+                        </div>
+
+                        {/* Contact Us Section */}
+                        <div className="footer-contact">
+                            <h2>Contact Us</h2>
+                            <div className="contact-buttons">
+                                <a
+                                    href="https://www.facebook.com/share/155fzxVVqE/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="contact-button facebook-button"
+                                >
+                                    <i className="fab fa-facebook"></i> Facebook
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/penang.visit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="contact-button instagram-button"
+                                >
+                                    <i className="fab fa-instagram"></i> Instagram
+                                </a>
+                                <a
+                                    href="mailto:info@weddingecommerce.com"
+                                    className="contact-button email-button"
+                                >
+                                    <i className="fas fa-envelope"></i> Email Us
+                                </a>
+                            </div>
+                        </div>
+                        <div className="footer-nav">
+                            <h2>Quick Links</h2>
+                            <nav className="footer-buttons">
+                                <a href="/" className="footer-button">Home</a>
+                                <a href="/products" className="footer-button">Products</a>
+                                <a href="/about-us" className="footer-button">About Us</a>
+                                <a href="/login" className="footer-button">Login</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div className="footer-bottom">
+                        © 2025 Wedding E-Commerce. All rights reserved.
+                    </div>
                 </footer>
             </Router>
         </AuthProvider>

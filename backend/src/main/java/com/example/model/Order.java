@@ -48,4 +48,14 @@ public class Order {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+    // Add getQuantity method
+    public int getQuantity(int productId) {
+        for (Product product : products) {
+            if (product.getId() == productId) {
+                return product.getQuantity();
+            }
+        }
+        return 0;
+    }
 }

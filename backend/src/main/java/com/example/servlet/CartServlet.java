@@ -24,6 +24,7 @@ public class CartServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final Map<String, Cart> userCarts = new HashMap<>();
     private List<Product> products;
+    private final Object lock = new Object();
 
     public CartServlet() {
         loadProducts();
@@ -37,22 +38,32 @@ public class CartServlet extends HttpServlet {
         Map<String, Object> requestBody = mapper.readValue(request.getInputStream(), new TypeReference<Map<String, Object>>() {});
         String sessionId = request.getSession().getId();
         Product product = mapper.convertValue(requestBody.get("product"), Product.class);
+        int quantity = (int) requestBody.get("quantity");
 
         userCarts.putIfAbsent(sessionId, new Cart());
-        userCarts.get(sessionId).addProduct(product);
+        Cart cart = userCarts.get(sessionId);
+        product.setQuantity(quantity); // Set the quantity
 
-        // Deduct inventory
-        for (Product p : products) {
-            if (p.getId() == product.getId()) {
-                p.setInventory(p.getInventory() - 1);
-                break;
+        synchronized (lock) { // Synchronize inventory updates
+            for (Product p : products) {
+                if (p.getId() == product.getId()) {
+                    if (p.getInventory() >= quantity) {
+                        p.setInventory(p.getInventory() - quantity);
+                        System.out.println("Deducted inventory for product ID: " + p.getId() + ", new inventory: " + p.getInventory());
+                        saveProducts(); // Save changes to file
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("Insufficient inventory for product ID: " + p.getId());
+                        return;
+                    }
+                    break;
+                }
             }
         }
 
-        // Save the updated product list to the JSON file
-        saveProducts();
+        cart.addProduct(product);
 
-        response.getWriter().write("Product " + product.getId() + " added to cart.");
+        response.getWriter().write("Product " + product.getId() + " added to cart with quantity " + quantity);
     }
 
     @Override
@@ -72,17 +83,6 @@ public class CartServlet extends HttpServlet {
                 Cart cart = userCarts.get(sessionId);
                 cart.removeProduct(Integer.parseInt(productId));
 
-                // Restore inventory
-                for (Product p : products) {
-                    if (p.getId() == Integer.parseInt(productId)) {
-                        p.setInventory(p.getInventory() + 1);
-                        break;
-                    }
-                }
-
-                // Save the updated product list to the JSON file
-                saveProducts();
-
                 response.getWriter().write("Product " + productId + " removed from cart.");
             } else {
                 response.getWriter().write("No cart found.");
@@ -91,23 +91,23 @@ public class CartServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         setCorsHeaders(response);
-        response.setContentType("application/json");
         String sessionId = request.getSession().getId();
+        Cart cart = userCarts.get(sessionId);
 
-        if (userCarts.containsKey(sessionId)) {
-            response.getWriter().write(new ObjectMapper().writeValueAsString(userCarts.get(sessionId).getProducts()));
+        if (cart != null) {
+            response.getWriter().write(new ObjectMapper().writeValueAsString(cart.getProducts()));
         } else {
             response.getWriter().write("[]");
         }
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        setCorsHeaders(resp);
-        resp.setStatus(HttpServletResponse.SC_OK);
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        setCorsHeaders(response);
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private void setCorsHeaders(HttpServletResponse response) {
@@ -118,11 +118,15 @@ public class CartServlet extends HttpServlet {
     }
 
     private void saveProducts() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
-        } catch (IOException e) {
-            e.printStackTrace();
+        synchronized (lock) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+                System.out.println("Products saved successfully to file.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Failed to save products to file.");
+            }
         }
     }
 
@@ -131,9 +135,11 @@ public class CartServlet extends HttpServlet {
             byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
             ObjectMapper objectMapper = new ObjectMapper();
             products = objectMapper.readValue(jsonData, new TypeReference<List<Product>>() {});
+            System.out.println("Products loaded successfully from file.");
         } catch (IOException e) {
             e.printStackTrace();
             products = new ArrayList<>();
+            System.err.println("Failed to load products from file.");
         }
     }
 

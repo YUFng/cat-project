@@ -6,6 +6,7 @@ import '../styles/SignUp.css'; // Import the CSS file for styling
 function SignUp() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
@@ -34,13 +35,21 @@ function SignUp() {
                 />
                 <label htmlFor="password">Password:</label>
                 <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={() => setShowPassword(!showPassword)}
+                    />
+                    Show Password
+                </label>
                 <input
                     type="hidden"
                     id="userType"
