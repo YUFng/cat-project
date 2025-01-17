@@ -22,27 +22,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebServlet("/orders")
 public class OrderServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private final CartServlet cartServlet;
     private List<Order> orders;
     private List<Product> products;
     private final Object lock = new Object();
 
-    public OrderServlet() {
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        // Load products from the servlet context
+        this.products = (List<Product>) getServletContext().getAttribute("products");
+        if (this.products == null) {
+            this.products = new ArrayList<>();
+            System.err.println("Products list is not initialized in the servlet context.");
+        }
+        // Load orders from JSON file
         try {
-            // Read orders from JSON file
             byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/orders.json"));
             ObjectMapper objectMapper = new ObjectMapper();
             orders = objectMapper.readValue(jsonData, new TypeReference<List<Order>>() {});
-
-            // Read products from JSON file
-            byte[] productData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
-            products = objectMapper.readValue(productData, new TypeReference<List<Product>>() {});
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             orders = new ArrayList<>();
-            products = new ArrayList<>();
         }
-        cartServlet = new CartServlet();
     }
 
     @Override
@@ -57,7 +58,7 @@ public class OrderServlet extends HttpServlet {
 
         // Get the cart for the session and transfer products to the order
         String sessionId = request.getSession().getId();
-        Cart cart = cartServlet.getCart(sessionId);
+        Cart cart = (Cart) getServletContext().getAttribute("cart_" + sessionId);
         if (cart != null) {
             order.setProducts(cart.getProducts());
         }
@@ -86,7 +87,7 @@ public class OrderServlet extends HttpServlet {
         saveOrders();
 
         // Clear the cart for the session
-        cartServlet.clearCart(sessionId);
+        getServletContext().removeAttribute("cart_" + sessionId);
 
         response.getWriter()
                 .write("{\"message\": \"Order saved successfully\", \"orderId\": \"" + order.getId() + "\"}");

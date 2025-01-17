@@ -39,11 +39,11 @@ public class CartServlet extends HttpServlet {
         String sessionId = request.getSession().getId();
         Product product = mapper.convertValue(requestBody.get("product"), Product.class);
         int quantity = (int) requestBody.get("quantity");
-
+    
         userCarts.putIfAbsent(sessionId, new Cart());
         Cart cart = userCarts.get(sessionId);
         product.setQuantity(quantity); // Set the quantity
-
+    
         synchronized (lock) { // Synchronize inventory updates
             boolean productFound = false;
             for (Product p : products) {
@@ -52,7 +52,6 @@ public class CartServlet extends HttpServlet {
                     if (p.getInventory() >= quantity) {
                         p.setInventory(p.getInventory() - quantity);
                         System.out.println("Deducted inventory for product ID: " + p.getId() + ", new inventory: " + p.getInventory());
-                        saveProducts(); // Save changes to file
                     } else {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         response.getWriter().write("Insufficient inventory for product ID: " + p.getId());
@@ -66,36 +65,66 @@ public class CartServlet extends HttpServlet {
                 response.getWriter().write("Product not found for ID: " + product.getId());
                 return;
             }
+            saveProducts(); // Save changes to file
         }
-
+    
         cart.addProduct(product);
         response.getWriter().write("Product " + product.getId() + " added to cart with quantity " + quantity);
     }
-
+    
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         setCorsHeaders(response);
         String sessionId = request.getSession().getId();
         String productId = request.getParameter("productId");
-
+    
         if (productId == null) {
             // Clear the entire cart
-            userCarts.remove(sessionId);
+            Cart cart = userCarts.remove(sessionId);
+            if (cart != null) {
+                // Restore inventory for all products in the cart
+                synchronized (lock) {
+                    for (Product cartProduct : cart.getProducts()) {
+                        for (Product p : products) {
+                            if (p.getId() == cartProduct.getId()) {
+                                p.setInventory(p.getInventory() + cartProduct.getQuantity());
+                                break;
+                            }
+                        }
+                    }
+                    saveProducts(); // Save changes to file
+                }
+            }
             response.getWriter().write("Cart cleared.");
         } else {
             // Remove a specific product from the cart
             if (userCarts.containsKey(sessionId)) {
                 Cart cart = userCarts.get(sessionId);
-                cart.removeProduct(Integer.parseInt(productId));
-
-                response.getWriter().write("Product " + productId + " removed from cart.");
+                int productIdInt = Integer.parseInt(productId);
+                Product removedProduct = cart.removeProduct(productIdInt);
+    
+                if (removedProduct != null) {
+                    // Restore inventory for the removed product
+                    synchronized (lock) {
+                        for (Product p : products) {
+                            if (p.getId() == productIdInt) {
+                                p.setInventory(p.getInventory() + removedProduct.getQuantity());
+                                break;
+                            }
+                        }
+                        saveProducts(); // Save changes to file
+                    }
+                    response.getWriter().write("Product " + productId + " removed from cart.");
+                } else {
+                    response.getWriter().write("Product not found in cart.");
+                }
             } else {
                 response.getWriter().write("No cart found.");
             }
         }
-    }
-
+    }    
+            
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         setCorsHeaders(response);
@@ -122,13 +151,11 @@ public class CartServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
     }
-
     private void saveProducts() {
         synchronized (lock) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonContent = mapper.writeValueAsString(products);
-                System.out.println("Saving products to file: " + jsonContent); // Debugging log
                 Files.createDirectories(Paths.get("src/main/resources"));
                 Files.write(Paths.get("src/main/resources/products.json"), jsonContent.getBytes());
                 System.out.println("Products saved successfully to file.");
@@ -138,7 +165,14 @@ public class CartServlet extends HttpServlet {
             }
         }
     }
-
+    
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        loadProducts();
+        getServletContext().setAttribute("products", products);
+    }
+    
     private void loadProducts() {
         try {
             byte[] jsonData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));

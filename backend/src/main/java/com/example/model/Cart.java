@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     public Cart() {
         this.products = new ArrayList<>();
@@ -23,11 +23,16 @@ public class Cart {
     }
 
     public void addProduct(Product product) {
-        this.products.add(product);
+        products.add(product);
     }
-
-    public void removeProduct(int productId) {
-        this.products.removeIf(product -> product.getId() == productId);
+        public Product removeProduct(int productId) {
+        for (Product product : products) {
+            if (product.getId() == productId) {
+                products.remove(product);
+                return product;
+            }
+        }
+        return null;
     }
 
     public void clear() {
