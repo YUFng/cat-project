@@ -16,3 +16,4 @@ com\example\servlet\ProductServlet$1.class
 com\example\servlet\CartServlet$1.class
 com\example\model\User.class
 com\example\servlet\CartServlet$2.class
+com\example\servlet\OrderServlet$2.class

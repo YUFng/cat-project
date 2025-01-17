@@ -45,8 +45,10 @@ public class CartServlet extends HttpServlet {
         product.setQuantity(quantity); // Set the quantity
 
         synchronized (lock) { // Synchronize inventory updates
+            boolean productFound = false;
             for (Product p : products) {
                 if (p.getId() == product.getId()) {
+                    productFound = true;
                     if (p.getInventory() >= quantity) {
                         p.setInventory(p.getInventory() - quantity);
                         System.out.println("Deducted inventory for product ID: " + p.getId() + ", new inventory: " + p.getInventory());
@@ -59,10 +61,14 @@ public class CartServlet extends HttpServlet {
                     break;
                 }
             }
+            if (!productFound) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Product not found for ID: " + product.getId());
+                return;
+            }
         }
 
         cart.addProduct(product);
-
         response.getWriter().write("Product " + product.getId() + " added to cart with quantity " + quantity);
     }
 
@@ -121,7 +127,10 @@ public class CartServlet extends HttpServlet {
         synchronized (lock) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
+                String jsonContent = mapper.writeValueAsString(products);
+                System.out.println("Saving products to file: " + jsonContent); // Debugging log
+                Files.createDirectories(Paths.get("src/main/resources"));
+                Files.write(Paths.get("src/main/resources/products.json"), jsonContent.getBytes());
                 System.out.println("Products saved successfully to file.");
             } catch (IOException e) {
                 e.printStackTrace();
