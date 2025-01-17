@@ -26,6 +26,10 @@ function OrderHistory() {
         return null; // Render nothing if user is not authenticated
     }
 
+    const handleScrollToBottom = () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
     return (
         <div className="order-history">
             <button onClick={() => navigate(-1)} className="back-button">Back</button>
@@ -48,6 +52,7 @@ function OrderHistory() {
                     ))}
                 </div>
             )}
+                <button onClick={handleScrollToBottom} className="scroll-to-bottom-button">↓</button>
         </div>
     );
 }

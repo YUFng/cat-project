@@ -7,6 +7,7 @@ import '../styles/Login.css'; // Import the CSS file for styling
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
@@ -45,13 +46,21 @@ function Login() {
                 />
                 <label htmlFor="password">Password:</label>
                 <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={() => setShowPassword(!showPassword)}
+                    />
+                    Show Password
+                </label>
                 <button type="submit">Login</button>
             </form>
             {message && <p>{message}</p>}

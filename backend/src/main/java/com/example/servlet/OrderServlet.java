@@ -33,9 +33,6 @@ public class OrderServlet extends HttpServlet {
             ObjectMapper objectMapper = new ObjectMapper();
             orders = objectMapper.readValue(jsonData, new TypeReference<List<Order>>() {});
 
-            // Read products from JSON file
-            byte[] productData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
-            products = objectMapper.readValue(productData, new TypeReference<List<Product>>() {});
         } catch (Exception e) {
             e.printStackTrace();
             orders = new ArrayList<>();
@@ -59,21 +56,10 @@ public class OrderServlet extends HttpServlet {
         Cart cart = cartServlet.getCart(sessionId);
         if (cart != null) {
             order.setProducts(cart.getProducts());
-            // Deduct inventory
-            for (Product cartProduct : cart.getProducts()) {
-                for (Product product : products) {
-                    if (product.getId() == cartProduct.getId()) {
-                        product.setInventory(product.getInventory() - cartProduct.getQuantity());
-                        System.out.println("Deducted inventory for product ID: " + product.getId() + ", new inventory: " + product.getInventory());
-                        break;
-                    }
-                }
-            }
         }
 
         orders.add(order);
         saveOrders();
-        saveProducts(); // Save the updated inventory before reloading it
 
         // Clear the cart for the session
         cartServlet.clearCart(sessionId);
@@ -109,16 +95,6 @@ public class OrderServlet extends HttpServlet {
         try {
             ObjectMapper mapper = new ObjectMapper();
             Files.write(Paths.get("src/main/resources/orders.json"), mapper.writeValueAsBytes(orders));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveProducts() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Files.write(Paths.get("src/main/resources/products.json"), mapper.writeValueAsBytes(products));
-            System.out.println("Products saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -55,6 +55,11 @@ function AdminProductList() {
             });
     };
 
+    const handleScrollToBottom = () => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    };
+
+    
     return (
         <div className="container">
             <h2>Admin Product List</h2>
@@ -126,6 +131,7 @@ function AdminProductList() {
                     ))
                 )}
             </div>
+            <button onClick={handleScrollToBottom} className="scroll-to-bottom-button">↓</button>
         </div>
     );
 }

@@ -8,10 +8,11 @@ public class Product {
     private String category;
     private int inventory; // Add inventory field
     private int quantity; // Add quantity field
+    private String image; // Add image field
 
     public Product() {}
 
-    public Product(int id, String name, double price, String description, String category, int inventory, int quantity) {
+    public Product(int id, String name, double price, String description, String category, int inventory, int quantity, String image) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -19,6 +20,7 @@ public class Product {
         this.category = category;
         this.inventory = inventory; // Initialize inventory
         this.quantity = quantity; // Initialize quantity
+        this.image = image; // Initialize image
     }
 
     public int getId() {
@@ -75,5 +77,13 @@ public class Product {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

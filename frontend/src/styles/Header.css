@@ -1,13 +1,24 @@
 .header {
     background-color: #333;
-    padding: 10px;
-    position: relative;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .navbar {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     align-items: center;
+}
+
+.logo {
+    margin-right: auto;
+}
+
+.website-logo {
+    max-width: 150px;
 }
 
 .hamburger {
