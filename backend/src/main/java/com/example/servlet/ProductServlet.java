@@ -21,14 +21,14 @@ public class ProductServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private List<Product> products;
 
-    public ProductServlet() {
-        loadProducts();
-    }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         setCorsHeaders(resp);
         resp.setContentType("application/json");
+        
+        // Reload products from file to ensure the latest data is served
+        loadProducts();
+        
         ObjectMapper mapper = new ObjectMapper();
         resp.getWriter().write(mapper.writeValueAsString(products));
     }
@@ -38,17 +38,12 @@ public class ProductServlet extends HttpServlet {
         setCorsHeaders(resp);
         resp.setContentType("application/json");
 
-        // Read the request body
         ObjectMapper mapper = new ObjectMapper();
         Product product = mapper.readValue(req.getInputStream(), Product.class);
 
-        // Add the product to the list
         products.add(product);
-
-        // Write the response
         resp.getWriter().write(mapper.writeValueAsString(product));
 
-        // Save the updated product list to the JSON file
         saveProducts();
     }
 
@@ -57,22 +52,19 @@ public class ProductServlet extends HttpServlet {
         setCorsHeaders(resp);
         resp.setContentType("application/json");
 
-        // Get the product ID from the request
         String productId = req.getParameter("id");
         products.removeIf(product -> product.getId() == Integer.parseInt(productId));
 
-        // Write the response
         resp.getWriter().write("{\"message\": \"Product removed\"}");
 
-        // Save the updated product list to the JSON file
         saveProducts();
     }
 
     private void setCorsHeaders(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // Allow requests from this origin
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        response.setHeader("Access-Control-Allow-Credentials", "true"); // Allow credentials
+        response.setHeader("Access-Control-Allow-Credentials", "true");
     }
 
     private void saveProducts() {

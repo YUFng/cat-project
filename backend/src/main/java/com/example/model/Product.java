@@ -6,9 +6,9 @@ public class Product {
     private double price;
     private String description;
     private String category;
-    private int inventory; // Add inventory field
-    private int quantity; // Add quantity field
-    private String image; // Add image field
+    private int inventory;
+    private int quantity;
+    private String image;
 
     public Product() {}
 
@@ -18,9 +18,9 @@ public class Product {
         this.price = price;
         this.description = description;
         this.category = category;
-        this.inventory = inventory; // Initialize inventory
-        this.quantity = quantity; // Initialize quantity
-        this.image = image; // Initialize image
+        this.inventory = inventory;
+        this.quantity = quantity;
+        this.image = image;
     }
 
     public int getId() {

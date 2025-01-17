@@ -25,6 +25,7 @@ public class OrderServlet extends HttpServlet {
     private final CartServlet cartServlet;
     private List<Order> orders;
     private List<Product> products;
+    private final Object lock = new Object();
 
     public OrderServlet() {
         try {
@@ -33,6 +34,9 @@ public class OrderServlet extends HttpServlet {
             ObjectMapper objectMapper = new ObjectMapper();
             orders = objectMapper.readValue(jsonData, new TypeReference<List<Order>>() {});
 
+            // Read products from JSON file
+            byte[] productData = Files.readAllBytes(Paths.get("src/main/resources/products.json"));
+            products = objectMapper.readValue(productData, new TypeReference<List<Product>>() {});
         } catch (Exception e) {
             e.printStackTrace();
             orders = new ArrayList<>();
@@ -56,6 +60,26 @@ public class OrderServlet extends HttpServlet {
         Cart cart = cartServlet.getCart(sessionId);
         if (cart != null) {
             order.setProducts(cart.getProducts());
+        }
+
+        synchronized (lock) { // Synchronize inventory updates
+            for (Product orderedProduct : order.getProducts()) {
+                for (Product p : products) {
+                    if (p.getId() == orderedProduct.getId()) {
+                        if (p.getInventory() >= orderedProduct.getQuantity()) {
+                            p.setInventory(p.getInventory() - orderedProduct.getQuantity());
+                            System.out.println("Deducted inventory for product ID: " + p.getId() + ", new inventory: " + p.getInventory());
+                        } else {
+                            System.err.println("Insufficient inventory for product ID: " + p.getId());
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            response.getWriter().write("Insufficient inventory for product ID: " + p.getId());
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
+            saveProducts(); // Save changes to file
         }
 
         orders.add(order);
@@ -97,6 +121,21 @@ public class OrderServlet extends HttpServlet {
             Files.write(Paths.get("src/main/resources/orders.json"), mapper.writeValueAsBytes(orders));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void saveProducts() {
+        synchronized (lock) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonContent = mapper.writeValueAsString(products);
+                System.out.println("Saving products to file: " + jsonContent); // Debugging log
+                Files.write(Paths.get("src/main/resources/products.json"), jsonContent.getBytes());
+                System.out.println("Products saved successfully to file.");
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.err.println("Failed to save products to file.");
+            }
         }
     }
 }
