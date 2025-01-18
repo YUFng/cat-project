@@ -37,3 +37,21 @@
 .pay-now-button:hover {
     background-color: #45a049;
 }
+
+.back-button {
+    position: absolute;
+    top: 90px; /* Adjusted to add margin from the top */
+    left: 10px;
+    padding: 10px 20px;
+    background-color: #FFFDD0;
+    color: #7d3f98;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #d2cc50;
+}

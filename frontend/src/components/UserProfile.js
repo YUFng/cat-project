@@ -51,7 +51,7 @@ function UserProfile() {
             <h1>User Profile</h1>
             {user ? (
                 <div>
-                    <div>
+                    <div className="input-group">
                         <label htmlFor="username">Username:</label>
                         <input
                             type="text"
@@ -60,6 +60,8 @@ function UserProfile() {
                             value={user.username}
                             readOnly
                         />
+                    </div>
+                    <div className="input-group">
                         <label htmlFor="password">Password:</label>
                         <div className="password-input-container">
                             <input
@@ -88,7 +90,7 @@ function UserProfile() {
                         />
                         <button type="submit">Save Address</button>
                     </form>
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogout} className="logout-button">Logout</button>
                     <button onClick={() => navigate('/order-history')} className="order-history-button">View Order History</button>
                 </div>
             ) : (
