@@ -5,12 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.example.model.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -36,29 +38,39 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         setCorsHeaders(response);
+        response.setContentType("application/json");
         ObjectMapper mapper = new ObjectMapper();
-        User user = mapper.readValue(request.getInputStream(), User.class);
-
-        if (request.getPathInfo().endsWith("/signup")) {
-            users.add(user);
-            saveUsers();
-            response.getWriter().write("{\"message\": \"User created successfully\"}");
-        } else if (request.getPathInfo().endsWith("/login")) {
-            boolean authenticated = users.stream()
-                .anyMatch(u -> u.getUsername().equals(user.getUsername()) && u.getPassword().equals(user.getPassword()));
-            if (authenticated) {
-                String userType = users.stream()
-                    .filter(u -> u.getUsername().equals(user.getUsername()))
-                    .findFirst()
-                    .get()
-                    .getUserType();
-                response.getWriter().write("{\"message\": \"Login successful\", \"userType\": \"" + userType + "\"}");
+        
+        try {
+            User user = mapper.readValue(request.getInputStream(), User.class);
+            String pathInfo = request.getPathInfo();
+            
+            if (pathInfo != null && pathInfo.endsWith("/login")) {
+                String username = user.getUsername();
+                String password = user.getPassword();
+    
+                boolean authenticated = users.stream()
+                    .anyMatch(u -> u.getUsername().equals(username) && u.getPassword().equals(password));
+                if (authenticated) {
+                    User loggedInUser = users.stream()
+                        .filter(u -> u.getUsername().equals(username))
+                        .findFirst()
+                        .get();
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", loggedInUser);
+                    response.getWriter().write("{\"message\": \"Login successful\", \"userType\": \"" + loggedInUser.getUserType() + "\"}");
+                } else {
+                    response.getWriter().write("{\"message\": \"Authentication failed\"}");
+                }
             } else {
-                response.getWriter().write("{\"message\": \"Authentication failed\"}");
+                response.getWriter().write("{\"message\": \"Invalid request\"}");
             }
+        } catch (IOException e) {
+            response.getWriter().write("{\"message\": \"Error processing request\"}");
+            e.printStackTrace();
         }
     }
-
+        
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         setCorsHeaders(response);

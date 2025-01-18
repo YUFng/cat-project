@@ -2,12 +2,15 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../components/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import '../styles/UserProfile.css'; // Import the CSS file for styling
 
 function UserProfile() {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [address, setAddress] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
 
     useEffect(() => {
         if (!user) {
@@ -48,8 +51,31 @@ function UserProfile() {
             <h1>User Profile</h1>
             {user ? (
                 <div>
-                    <p><strong>Username:</strong> {user.username}</p>
-                    <p><strong>Password:</strong> {user.password}</p>
+                    <div>
+                        <label htmlFor="username">Username:</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={user.username}
+                            readOnly
+                        />
+                        <label htmlFor="password">Password:</label>
+                        <div className="password-input-container">
+                            <input
+                                type={showPassword ? "text" : "password"} // Toggle input type
+                                id="password"
+                                name="password"
+                                value={user.password}
+                                readOnly
+                            />
+                            <FontAwesomeIcon
+                                icon={showPassword ? faEyeSlash : faEye}
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="password-toggle-icon"
+                            />
+                        </div>
+                    </div>
                     <form onSubmit={handleAddressSubmit}>
                         <label htmlFor="address">Delivery Address:</label>
                         <input
