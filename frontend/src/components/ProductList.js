@@ -2,108 +2,74 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../components/AuthContext';
-import '../styles/ProductList.css'; // Import the CSS file for styling
+import '../styles/ProductList.css';
 
 function ProductList() {
     const { user } = useContext(AuthContext);
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
+    const [cartSummary, setCartSummary] = useState({ totalQuantity: 0, totalPrice: 0 });
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [quantities, setQuantities] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchProducts();
-        // Fetch cart if user is logged in
         if (user) {
             axios.get('http://localhost:8080/cart', { withCredentials: true })
                 .then(response => {
-                    console.log('Cart fetched:', response.data); // Debugging log
                     setCart(response.data);
+                    calculateCartSummary(response.data);
                 })
-                .catch(error => {
-                    console.error('Error fetching cart:', error);
-                    setCart([]); // Ensure cart is an array even if fetching fails
-                });
+                .catch(() => setCart([]));
         }
-
-        // Listen for the custom event to update products
-        const updateProductsListener = () => {
-            fetchProducts();
-        };
-        window.addEventListener('updateProducts', updateProductsListener);
-
-        // Cleanup event listener on component unmount
-        return () => {
-            window.removeEventListener('updateProducts', updateProductsListener);
-        };
     }, [user]);
 
     const fetchProducts = () => {
-        // Fetch products
         axios.get('http://localhost:8080/products', { withCredentials: true })
-            .then(response => {
-                console.log('Products fetched:', response.data); // Debugging log
-                setProducts(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching products:', error);
-                setProducts([]); // Ensure products is an array even if fetching fails
-            });
+            .then(response => setProducts(response.data))
+            .catch(() => setProducts([]));
     };
 
-    const handleAddToCart = (product, quantity) => {
+    const calculateCartSummary = (cartItems) => {
+        const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        setCartSummary({ totalQuantity, totalPrice });
+    };
+
+    const handleQuantityChange = (productId, quantity) => {
+        setQuantities(prev => ({
+            ...prev,
+            [productId]: quantity,
+        }));
+    };
+
+    const handleAddToCart = (product) => {
+        const quantity = quantities[product.id] || 1;
+
         if (!user) {
             alert('Please log in to add items to your cart.');
             return;
         }
 
-        if (product.inventory <= 0) {
-            alert('This product is out of stock.');
+        if (quantity > product.inventory) {
+            alert('The quantity exceeds the available inventory.');
             return;
         }
 
         axios.post('http://localhost:8080/cart', { product, quantity }, { withCredentials: true })
-            .then(response => {
-                console.log(response.data);
-                setCart([...cart, { ...product, cartItemId: `${product.id}-${Date.now()}`, quantity }]);
+            .then(() => {
+                const updatedCart = [...cart, { ...product, quantity }];
+                setCart(updatedCart);
+                calculateCartSummary(updatedCart);
                 setProducts(products.map(p => p.id === product.id ? { ...p, inventory: p.inventory - quantity } : p));
-                // Dispatch custom event to update products
-                window.dispatchEvent(new Event('updateProducts'));
             })
-            .catch(error => {
-                console.error('Error adding product to cart:', error);
-                if (error.response) {
-                    console.error('Error response data:', error.response.data);
-                }
-            });
+            .catch(() => alert('Failed to add the product to the cart.'));
     };
 
-    const handleRemoveFromCart = (cartItemId) => {
-        if (!user) {
-            alert('Please log in to remove items from your cart.');
-            return;
-        }
-
-        const productId = cart.find(item => item.cartItemId === cartItemId).id;
-
-        axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
-            .then(response => {
-                console.log('Product removed:', response.data);
-                setCart(cart.filter(item => item.cartItemId !== cartItemId));
-                setProducts(products.map(p => p.id === productId ? { ...p, inventory: p.inventory + 1 } : p));
-                // Dispatch custom event to update products
-                window.dispatchEvent(new Event('updateProducts'));
-            })
-            .catch(error => console.error('Error removing product:', error));
-    };
-
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    const handleCategorySelect = (category) => {
-        setSelectedCategory(category);
+    const handleViewCart = () => {
+        navigate('/cart');
     };
 
     const filteredProducts = products.filter(product => {
@@ -113,14 +79,6 @@ function ProductList() {
         );
     });
 
-    const handleBuyNow = () => {
-        navigate('/payment');
-    };
-
-    const handleScrollToBottom = () => {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-    };
-
     return (
         <div className="container">
             <h2>Product List</h2>
@@ -129,61 +87,44 @@ function ProductList() {
                     type="text"
                     placeholder="Search products..."
                     value={searchTerm}
-                    onChange={handleSearch}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             <div className="category-buttons">
-                <button onClick={() => handleCategorySelect('')}>All</button>
-                <button onClick={() => handleCategorySelect('rustic')}>Rustic</button>
-                <button onClick={() => handleCategorySelect('elegant')}>Elegant</button>
-                <button onClick={() => handleCategorySelect('custom')}>Custom</button>
+                <button onClick={() => setSelectedCategory('')} className="category-button">All</button>
+                <button onClick={() => setSelectedCategory('rustic')} className="category-button">Rustic</button>
+                <button onClick={() => setSelectedCategory('elegant')} className="category-button">Elegant</button>
+                <button onClick={() => setSelectedCategory('custom')} className="category-button">Custom</button>
             </div>
             <div className="product-grid">
-                {filteredProducts && filteredProducts.length > 0 ? (
-                    filteredProducts.map((product, index) => (
-                        <div key={`${product.id}-${index}`} className="product-card">
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map(product => (
+                        <div key={product.id} className="product-card">
                             <img src={product.image} alt={product.name} className="product-image" />
                             <h2>{product.name}</h2>
-                            <p>Price: ${product.price}</p>
-                            <p>Description: {product.description}</p>
+                            <p>Price: ${product.price.toFixed(2)}</p>
                             <p>Category: {product.category}</p>
-                            <p>Inventory: {product.inventory}</p> {/* Display inventory */}
+                            <p>Inventory: {product.inventory}</p>
                             <input
                                 type="number"
                                 min="1"
                                 max={product.inventory}
-                                defaultValue="1"
-                                onChange={(e) => product.quantity = parseInt(e.target.value)}
+                                value={quantities[product.id] || 1}
+                                onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))}
+                                className="quantity-input"
                             />
-                            <button onClick={() => handleAddToCart(product, product.quantity || 1)}>Add to Cart</button>
+                            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
                         </div>
                     ))
                 ) : (
                     <p>No products available.</p>
                 )}
             </div>
-            <h2>Shopping Cart</h2>
-            <div className="product-grid">
-                {cart.length === 0 ? (
-                    <p>No products in the cart.</p>
-                ) : (
-                    cart.filter(item => item !== null).map((product, index) => (
-                        <div key={`${product.cartItemId}-${index}`} className="product-card">
-                            <img src={product.image} alt={product.name} className="product-image" />
-                            <h2>{product.name}</h2>
-                            <p>Price: ${product.price}</p>
-                            <p>Description: {product.description}</p>
-                            <p>Category: {product.category}</p>
-                            <p>Quantity: {product.quantity}</p> {/* Display quantity */}
-                            <button onClick={() => handleRemoveFromCart(product.cartItemId)}>Remove</button>
-                        </div>
-                    ))
-                )}
+            <div className="cart-summary">
+                <p>Total Items: {cartSummary.totalQuantity}</p>
+                <p>Total Price: ${cartSummary.totalPrice.toFixed(2)}</p>
+                <button onClick={handleViewCart} className="view-cart-button">View Cart</button>
             </div>
-            {cart.length > 0 && (
-                <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
-            )}
-            <button onClick={handleScrollToBottom} className="scroll-to-bottom-button">↓</button>
         </div>
     );
 }

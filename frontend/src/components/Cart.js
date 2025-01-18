@@ -12,10 +12,7 @@ function Cart() {
     useEffect(() => {
         if (user) {
             axios.get('http://localhost:8080/cart', { withCredentials: true })
-                .then(response => {
-                    console.log('Cart data fetched:', response.data); // Debugging log
-                    setCart(response.data);
-                })
+                .then(response => setCart(response.data))
                 .catch(error => console.error('Error fetching cart:', error));
         }
     }, [user]);
@@ -23,10 +20,7 @@ function Cart() {
     const handleRemove = (productId) => {
         if (user) {
             axios.delete(`http://localhost:8080/cart?productId=${productId}`, { withCredentials: true })
-                .then(response => {
-                    console.log('Product removed:', response.data); // Debugging log
-                    setCart(cart.filter(item => item.id !== productId));
-                })
+                .then(() => setCart(cart.filter(item => item.id !== productId)))
                 .catch(error => console.error('Error removing product:', error));
         }
     };
@@ -35,27 +29,53 @@ function Cart() {
         navigate('/payment');
     };
 
+    const handleBackToProducts = () => {
+        navigate('/products');
+    };
+
+    // Calculate total quantity and price
+    const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+    const totalPrice = cart.reduce((total, item) => total + item.quantity * item.price, 0);
+
     return (
-        <div>
-            <h2>Shopping Cart</h2>
-            <div className="product-grid">
-                {cart.length === 0 ? (
-                    <p>No products in the cart.</p>
-                ) : (
-                    cart.map(product => (
-                        <div key={product.id} className="product-card">
-                            <img src={product.image} alt={product.name} className="product-image" />
-                            <h2>{product.name}</h2>
-                            <p>Price: ${product.price}</p>
-                            <p>Description: {product.description}</p>
-                            <p>Category: {product.category}</p>
-                            <button onClick={() => handleRemove(product.id)}>Remove</button>
-                        </div>
-                    ))
-                )}
-            </div>
-            {cart.length > 0 && (
-                <button onClick={handleBuyNow} className="buy-now-button">Buy Now</button>
+        <div className="cart-container">
+            <h2 className="cart-title">Shopping Cart</h2>
+            {cart.length === 0 ? (
+                <div className="empty-cart">
+                    <p className="empty-cart-message">Your cart is empty. Add some products to get started!</p>
+                    <button onClick={handleBackToProducts} className="back-to-products-button">
+                        Back to Products
+                    </button>
+                </div>
+            ) : (
+                <>
+                    <div className="cart-summary">
+                        <p>Total Items: <strong>{totalQuantity}</strong></p>
+                        <p>Total Price: <strong>${totalPrice.toFixed(2)}</strong></p>
+                    </div>
+                    <div className="product-grid">
+                        {cart.map(product => (
+                            <div key={product.id} className="product-card">
+                                <img src={product.image} alt={product.name} className="product-image" />
+                                <h3 className="product-name">{product.name}</h3>
+                                <p className="product-price">${product.price.toFixed(2)}</p>
+                                <p className="product-quantity">Quantity: {product.quantity}</p>
+                                <p className="product-subtotal">Subtotal: ${(product.quantity * product.price).toFixed(2)}</p>
+                                <button 
+                                    onClick={() => handleRemove(product.id)} 
+                                    className="remove-button">
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="cart-actions">
+                        <button onClick={handleBuyNow} className="buy-now-button">Proceed to Checkout</button>
+                        <button onClick={handleBackToProducts} className="back-to-products-button">
+                            Back to Products
+                        </button>
+                    </div>
+                </>
             )}
         </div>
     );

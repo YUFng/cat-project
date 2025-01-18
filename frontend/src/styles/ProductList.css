@@ -1,116 +1,327 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
 }
 
-.container {
+.product-list-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
-h2 {
+.product-list-title {
+    font-size: 2rem;
     text-align: center;
-    color: #333;
+    color: #f4f2f7;
+    margin-bottom: 20px;
 }
 
-.search-bar {
+/* Filters */
+.filters {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
     flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
+    width: 350px; /* Adjust the width as needed */
+    padding: 12px 20px; /* Adjust padding for spacing */
+    border: none; /* Remove border */
+    border-radius: 25px; /* Rounded edges */
+    font-size: 1rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a soft shadow */
+    transition: all 0.3s ease;
+    margin: 0 auto; /* Center the search bar */
 }
 
 .search-bar input {
-    width: 100%;
-    max-width: 500px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
+    outline: none; /* Remove the default outline */
+    border: none; /* Remove the default border */
+    padding: 10px; /* Add some padding for better appearance */
+    width: 100%; /* Make the input take the full width of the container */
+    box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+    font-size: 16px; /* Adjust the font size */
 }
 
+.search-bar::placeholder {
+    color: #aaa; /* Placeholder text color */
+    font-size: 0.9rem; /* Placeholder font size */
+}
+
+.search-container {
+    text-align: center; /* Center-align the container */
+    margin-top: 20px; /* Add spacing above */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Center the search bar */
+    align-items: center; /* Vertically center the search bar */
+    height: auto; /* Ensure the container height matches content */
+    padding: 0; /* Remove any extra padding */
+    border: none; /* Remove any border */
+    background: none; /* Ensure no background is applied */
+}
+
+/* Updated Category Buttons */
 .category-buttons {
     display: flex;
+    gap: 15px;
     justify-content: center;
-    flex-wrap: wrap;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
-.category-buttons button {
-    background-color: #333;
-    color: white;
+.category-button {
+    background: linear-gradient(45deg, #8c34cf, #6a28a3);
+    color: #fff;
     border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 5px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    flex: 1 1 auto;
-    max-width: 150px;
-    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.category-buttons button:hover {
-    background-color: #555;
+.category-button:hover {
+    background: linear-gradient(45deg, #a741c3, #7a36b5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+.category-button.active {
+    background: #6a28a3;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Grid */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    margin-top: 20px;
 }
 
 .product-card {
     background-color: white;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    transition: transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product-card:hover {
-    transform: scale(1.05);
-}
-
-.product-card h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.product-card p {
-    margin: 10px 0;
-    color: #666;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .product-image {
     max-width: 100%;
     height: auto;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
+    border-radius: 8px;
 }
 
-.product-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+.product-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
 }
 
-.product-card button {
-    background-color: #333;
+.product-price {
+    font-size: 1rem;
+    color: #28a745;
+    margin-bottom: 10px;
+}
+
+.product-category {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.add-to-cart-button {
+    background-color: #8c34cf;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.product-card button:hover {
-    background-color: #555;
+.add-to-cart-button:hover {
+    background-color: #8c34cf;
+}
+
+/* No Products Message */
+.no-products-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 20px;
+}
+
+/* Shopping Cart */
+.shopping-cart-title {
+    text-align: center;
+    font-size: 2em;
+    margin: 40px 0 20px;
+    color: #f4f2f7;
+}
+
+.cart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+.cart-item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.cart-item-card:hover {
+    transform: scale(1.02);
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-size: 1.2em;
+    color: #333;
+    margin: 0;
+}
+
+.cart-item-price,
+.cart-item-quantity {
+    color: #f4f2f7;
+    margin: 5px 0;
+}
+
+.cart-remove-button {
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cart-remove-button:hover {
+    background-color: #e04344;
+}
+
+.buy-now-button {
+    background-color: #8c34cf;
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.buy-now-button:hover {
+    background-color: #8c34cf;
+}
+
+/* Empty Cart */
+.empty-cart-container {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.empty-cart-image {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.empty-cart-message {
+    font-size: 1.5em;
+    color: #f4f2f7;
+    margin-bottom: 20px;
+}
+
+.continue-shopping-button {
+    background-color: #8c34cf;
+    color: #f4f2f7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.continue-shopping-button:hover {
+    background-color: #a741c3;
+}
+
+.quantity-input {
+    width: 60px;
+    padding: 5px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+/* Updated View Cart Button */
+.view-cart-button {
+    background-color: #8c34cf;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.view-cart-button:hover {
+    background-color: #a741c3;
+    transform: translateY(-3px);
 }
