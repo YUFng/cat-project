@@ -65,7 +65,7 @@ function App() {
                             </div>
                             <h2>About Us</h2>
                             <p>
-                                "Wedding E-Commerce" is your ultimate destination for all your wedding needs.
+                                "EverAfter-Commerce" is your ultimate destination for all your wedding needs.
                                 From wedding attire to decorations, we provide everything to make your special day unforgettable.
                             </p>
                         </div>
