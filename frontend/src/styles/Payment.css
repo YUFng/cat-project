@@ -2,7 +2,7 @@
     max-width: 600px;
     margin: 50px auto;
     padding: 30px;
-    background: linear-gradient(90deg, #b470bd, #7d3f98); /* Elegant gradient background */
+    background: linear-gradient(90deg, #772e80, #b374ce); /* Elegant gradient background */
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     color: #ffffff;
@@ -91,4 +91,68 @@
 
 .pay-now-button:hover {
     background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.back-button {
+    background-color: #ffffff;
+    color: #7d3f98;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    background-color: #e5dc30;
+    transform: scale(1.05);
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #f3e7fa;
+    font-size: 1rem;
+    color: #333;
+    margin-top: 10px;
+}
+
+select:focus {
+    outline: none;
+    border: 2px solid #b470bd;
+}
+
+.address-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #ffffff; /* Solid white for contrast */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333333;
+    font-family: 'Roboto', sans-serif;
+}
+
+.address-section h3 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #7d3f98; /* Accent color for the title */
+    text-align: center;
+    border-bottom: 2px solid #e3c5f4; /* Subtle underline */
+    padding-bottom: 10px;
+}
+
+.address-section p {
+    font-size: 1.2rem;
+    color: #555555;
+    text-align: center;
+    line-height: 1.6;
+    margin: 10px 0;
 }

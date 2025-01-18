@@ -51,6 +51,7 @@ body {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle text shadow */
     line-height: 1.2; /* Adjust line spacing */
     background: linear-gradient(90deg, #bd7ac9, #7d3f98); /* Gradient background for text */
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent; /* Makes the text gradient */
 }
@@ -62,16 +63,21 @@ body {
     font-style: italic;
 }
 
-/* Carousel */
 .carousel-container {
-    margin: 0 auto; /* Center horizontally */
-    padding: 20px;
-    max-width: 1200px;
+    padding: 20px 0;
+}
+
+.carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+    padding: 20px 0;
 }
 
 .carousel-card {
     text-align: center;
-    height: 400px;
+    height: 425px;
     background-color: #fff;
     border: 2px solid #eaeaea;
     border-radius: 10px;
@@ -149,16 +155,14 @@ body {
 
 /* Featured Section Title */
 .featured-section h2 {
-    font-size: 2.8rem; /* Slightly smaller than the main header */
+    font-size: 1.5rem; 
     font-style: italic; /* Add italic style */
     font-family:Georgia, 'Times New Roman', Times, serif; /* Serif font for elegance */
     color: #7d3f98; /* Keep consistent color theme */
-    margin-bottom: 25px;
     font-weight: bold;
     letter-spacing: 1.5px; /* Add spacing between letters */
     border-bottom: 3px #bd7ac9; /* Add an underline effect */
     display: inline-block; /* Keep underline tight */
-    padding-bottom: 5px;
 }
 
 /* Featured Products */
@@ -166,7 +170,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px; /* More space between items */
+    gap: 20px; /* More space between items */
     flex-wrap: wrap;
 }
 
