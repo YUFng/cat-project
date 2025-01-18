@@ -39,7 +39,7 @@ function App() {
             <Router>
                 <Header />
                 <div className="container">
-                    <h1>Welcome to the Wedding E-Commerce Website</h1>
+                    <h1>Welcome to the EverAfter Creations</h1>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
