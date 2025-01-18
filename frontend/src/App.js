@@ -65,7 +65,7 @@ function App() {
                             </div>
                             <h2>About Us</h2>
                             <p>
-                                "EverAfter-Commerce" is your ultimate destination for all your wedding needs.
+                                "EverAfter Creations" is your ultimate destination for all your wedding needs.
                                 From wedding attire to decorations, we provide everything to make your special day unforgettable.
                             </p>
                         </div>
@@ -109,7 +109,7 @@ function App() {
                         </div>
                     </div>
                     <div className="footer-bottom">
-                        © 2025 Wedding E-Commerce. All rights reserved.
+                        © 2025 EverAfter Creations. All rights reserved.
                     </div>
                 </footer>
             </Router>
