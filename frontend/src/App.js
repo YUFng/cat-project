@@ -39,7 +39,7 @@ function App() {
             <Router>
                 <Header />
                 <div className="container">
-                    <h1>Welcome to the Wedding E-Commerce Website</h1>
+                    <h1>Welcome to the EverAfter Creations</h1>
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
@@ -65,7 +65,7 @@ function App() {
                             </div>
                             <h2>About Us</h2>
                             <p>
-                                "Wedding E-Commerce" is your ultimate destination for all your wedding needs.
+                                "EverAfter Creations" is your ultimate destination for all your wedding needs.
                                 From wedding attire to decorations, we provide everything to make your special day unforgettable.
                             </p>
                         </div>
@@ -109,7 +109,7 @@ function App() {
                         </div>
                     </div>
                     <div className="footer-bottom">
-                        © 2025 Wedding E-Commerce. All rights reserved.
+                        © 2025 EverAfter Creations. All rights reserved.
                     </div>
                 </footer>
             </Router>
