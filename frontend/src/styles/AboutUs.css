@@ -1,9 +1,9 @@
 .about-us {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif; /* Modern font */
     color: #333333;
     text-align: center;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #f7f7f7;
 }
 
 .about-us-content {
@@ -11,89 +11,87 @@
     width: 100%;
     margin: 0 auto;
     padding: 20px;
-    gap: 15px;
     text-align: center;
 }
 
 header {
-    position: relative;
-    color: #fff;
-    padding: 40px 20px;
-    text-align: center;
-    border-bottom: 4px solid #ffffff;
-    animation: fade-in 1s ease-in-out;
-    box-sizing: border-box;
-    background: linear-gradient(45deg, #936fc5, #860ad4);
-    width: 100%;
+    background: linear-gradient(90deg, #b470bd, #7d3f98); /* Updated gradient */
+    color: #ffffff;
+    padding: 50px 20px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
-    font-family: Arial, sans-serif;
-    color:  #f4f2f7;
-    font-size: 2.8em;
-    margin-bottom: 20px;
-    line-height: 1.2;
+    font-family: 'Playfair Display', serif; /* Elegant font for titles */
+    font-size: 3em;
+    margin-bottom: 15px;
 }
 
 header p {
     font-size: 1.2em;
-    color: #f4f2f7;
-    margin: 0;
-    line-height: 1.6;
+    line-height: 1.8;
+    color: #f0e4f7;
 }
 
 .members {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.about-us-content h2{
+    gap: 30px;
     margin-top: 30px;
-    margin-bottom: 30px;
-    font-size: 2rem;
 }
 
-.mission p{
-    padding-bottom: 10px;
-    font-size: 1.5rem;
+.about-us-content h2 {
+    margin-top: 40px;
+    color: #7d3f98; /* Matching gradient color */
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+}
+
+.mission p {
+    padding: 20px;
+    font-size: 1.8rem;
+    color: #555555;
+    background: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
 }
 
 .member-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    width: 400px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 350px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
 }
 
 .member-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .member-image {
     width: 100%;
-    height: 400px;
-    margin-bottom: 15px;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 4px solid #b470bd; /* Gradient color reference */
 }
 
 .member-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 1.6rem;
+    margin: 15px 20px 5px;
+    color: #333333;
+    font-weight: 600;
 }
 
 .member-card p {
-    font-size: 1.3rem;
-    color: #777;
-}
-
-.promo-video {
-    margin-top: 40px;
-    text-align: center;
+    font-size: 1.2rem;
+    margin: 0 20px 20px;
+    color: #666666;
 }
