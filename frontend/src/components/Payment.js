@@ -24,9 +24,11 @@ function Payment() {
             .catch(error => console.error('Error fetching cart:', error));
 
         axios.get('http://localhost:8080/user/address', { withCredentials: true })
-            .then(response => {
-                setAddress(response.data.address);
-            })
+        .then(response => {
+            const userAddress = response.data[user.username];
+            console.log('Fetched address:', userAddress); // Debugging log
+            setAddress(userAddress);
+        })
             .catch(error => console.error('Error fetching address:', error));
     }, [user, navigate]);
 

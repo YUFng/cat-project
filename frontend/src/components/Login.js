@@ -53,14 +53,14 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <label>
+                <div className="show-password-login-container">
                     <input
                         type="checkbox"
                         checked={showPassword}
                         onChange={() => setShowPassword(!showPassword)}
                     />
-                    Show Password
-                </label>
+                    <label>Show Password</label>
+                </div>
                 <button type="submit">Login</button>
             </form>
             {message && <p>{message}</p>}

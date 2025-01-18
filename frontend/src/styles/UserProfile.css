@@ -29,8 +29,8 @@
     top: 90px; /* Adjusted to add margin from the top */
     left: 10px;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: #FFFDD0;
+    color: #7d3f98;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -39,5 +39,84 @@
 }
 
 .back-button:hover {
-    background-color: #0056b3;
+    background-color: #e5dc30;
+}
+
+.password-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle-icon {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+form input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 25px;
+    background-color: #8c34cf;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+form button:hover {
+    background-color: #441a64;
+}
+
+.logout-button, .order-history-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #8c34cf;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-button:hover, .order-history-button:hover {
+    background-color: #441a64;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }

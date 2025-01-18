@@ -42,14 +42,14 @@ function SignUp() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <label>
+                <div className="show-password-container">
                     <input
                         type="checkbox"
                         checked={showPassword}
                         onChange={() => setShowPassword(!showPassword)}
                     />
-                    Show Password
-                </label>
+                    <label>Show Password</label>
+                </div>
                 <input
                     type="hidden"
                     id="userType"

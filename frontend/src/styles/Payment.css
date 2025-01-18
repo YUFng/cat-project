@@ -2,7 +2,7 @@
     max-width: 600px;
     margin: 50px auto;
     padding: 30px;
-    background: linear-gradient(90deg, #b470bd, #7d3f98); /* Elegant gradient background */
+    background: linear-gradient(90deg, #772e80, #b374ce); /* Elegant gradient background */
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     color: #ffffff;
@@ -108,7 +108,7 @@
 }
 
 .back-button:hover {
-    background-color: #f3e7fa;
+    background-color: #e5dc30;
     transform: scale(1.05);
 }
 
