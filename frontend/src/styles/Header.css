@@ -18,6 +18,16 @@
     margin-right: auto;
 }
 
+.logo a {
+    text-decoration: none; 
+    display: inline-block; 
+}
+
+.logo a:hover {
+    background: none; 
+    box-shadow: none; 
+}
+
 .website-logo {
     max-width: 150px;
     transition: none; /* Remove any hover transition */
