@@ -5,14 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.example.model.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,22 +44,9 @@ public class UserServlet extends HttpServlet {
             String pathInfo = request.getPathInfo();
             
             if (pathInfo != null && pathInfo.endsWith("/login")) {
-                String username = user.getUsername();
-                String password = user.getPassword();
-    
-                boolean authenticated = users.stream()
-                    .anyMatch(u -> u.getUsername().equals(username) && u.getPassword().equals(password));
-                if (authenticated) {
-                    User loggedInUser = users.stream()
-                        .filter(u -> u.getUsername().equals(username))
-                        .findFirst()
-                        .get();
-                    HttpSession session = request.getSession();
-                    session.setAttribute("user", loggedInUser);
-                    response.getWriter().write("{\"message\": \"Login successful\", \"userType\": \"" + loggedInUser.getUserType() + "\"}");
-                } else {
-                    response.getWriter().write("{\"message\": \"Authentication failed\"}");
-                }
+                handleLogin(request, response, user);
+            } else if (pathInfo != null && pathInfo.endsWith("/signup")) {
+                handleSignUp(response, user);
             } else {
                 response.getWriter().write("{\"message\": \"Invalid request\"}");
             }
@@ -70,7 +55,37 @@ public class UserServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-        
+
+    private void handleLogin(HttpServletRequest request, HttpServletResponse response, User user) throws IOException {
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        boolean authenticated = users.stream()
+            .anyMatch(u -> u.getUsername().equals(username) && u.getPassword().equals(password));
+        if (authenticated) {
+            User loggedInUser = users.stream()
+                .filter(u -> u.getUsername().equals(username))
+                .findFirst()
+                .get();
+            request.getSession().setAttribute("user", loggedInUser);
+            response.getWriter().write("{\"message\": \"Login successful\", \"userType\": \"" + loggedInUser.getUserType() + "\"}");
+        } else {
+            response.getWriter().write("{\"message\": \"Authentication failed\"}");
+        }
+    }
+
+    private void handleSignUp(HttpServletResponse response, User user) throws IOException {
+        boolean userExists = users.stream()
+            .anyMatch(u -> u.getUsername().equals(user.getUsername()));
+        if (userExists) {
+            response.getWriter().write("{\"message\": \"User already exists\"}");
+        } else {
+            users.add(user);
+            saveUsers();
+            response.getWriter().write("{\"message\": \"Account created successfully!\"}");
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         setCorsHeaders(response);
