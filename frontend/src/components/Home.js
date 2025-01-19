@@ -1,32 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Carousel from 'react-multi-carousel';
-import axios from 'axios';
 import 'react-multi-carousel/lib/styles.css';
 import '../styles/Home.css';
 
 function Home() {
-    const [carouselItems, setCarouselItems] = useState([]);
     const navigate = useNavigate();
 
     const handleShopNow = () => {
         navigate('/products');
     };
 
-    useEffect(() => {
-        axios.get('http://localhost:8080/products')
-            .then(response => {
-                const products = response.data;
-                const items = products.map(product => ({
-                    image: product.image,
-                    title: product.name,
-                    price: `$${product.price.toFixed(2)}`,
-                    desc: product.description,
-                }));
-                setCarouselItems(items);
-            })
-            .catch(error => console.error('Error fetching products:', error));
-    }, []);
+    const carouselItems = [
+        {
+            image: 'images/rustic_floral_arrangement.jpg',
+            title: 'Rustic Floral Arrangement',
+            price: '$25.99',
+            desc: 'Beautiful floral arrangement perfect for rustic-themed weddings.',
+        },
+        {
+            image: 'images/tableware.jpg',
+            title: 'Elegant Tableware Set',
+            price: '$45.99',
+            desc: 'Sophisticated tableware for a truly elegant event.',
+        },
+        {
+            image: 'images/custombanner.jpg',
+            title: 'Custom Banner',
+            price: '$15.99',
+            desc: 'Personalized banner for your special event.',
+        },
+    ];
 
     const responsive = {
         desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
