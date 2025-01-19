@@ -20,6 +20,9 @@
 
 .website-logo {
     max-width: 150px;
+    transition: none; /* Remove any hover transition */
+    background: none; /* Ensure no background color change */
+    box-shadow: none; /* Remove hover shadow if any */
 }
 
 .nav-links {
