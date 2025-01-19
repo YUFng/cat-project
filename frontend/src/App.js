@@ -75,7 +75,7 @@ function App() {
                             <h2>Contact Us</h2>
                             <div className="contact-buttons">
                                 <a
-                                    href="https://www.facebook.com/share/155fzxVVqE/"
+                                    href="https://www.facebook.com/bravo.co.eventsdesign"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="contact-button facebook-button"
@@ -83,7 +83,7 @@ function App() {
                                     <i className="fab fa-facebook"></i> Facebook
                                 </a>
                                 <a
-                                    href="https://www.instagram.com/penang.visit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                                    href="https://www.instagram.com/bravo.coeventsdesign/?hl=en"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="contact-button instagram-button"
@@ -91,7 +91,7 @@ function App() {
                                     <i className="fab fa-instagram"></i> Instagram
                                 </a>
                                 <a
-                                    href="mailto:info@weddingecommerce.com"
+                                    href="mailto:info@everaftercreations.com"
                                     className="contact-button email-button"
                                 >
                                     <i className="fas fa-envelope"></i> Email Us

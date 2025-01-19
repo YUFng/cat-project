@@ -18,22 +18,73 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Header Styles */
 .header {
-    background-color: #333;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
+    background: #fdf5e6; /* Soft cream background */
+    padding: 20px 0;
+    color: #333; /* Dark text for contrast */
+    font-family: 'Roboto', sans-serif;
+    border-bottom: 2px solid #e0cda9; /* Light brown accent for separation */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header-logo img {
+    max-height: 50px;
+    margin-right: 20px;
+}
+
+.header-nav {
+    display: flex;
+    gap: 20px;
 }
 
 .header a {
-    color: #f4f2f7;
     text-decoration: none;
-    margin: 0 15px;
-    font-size: 18px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #7d3f98; /* Dark text for links */
+    padding: 10px 15px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .header a:hover {
-    text-decoration: underline;
+    background-color: #e0cda9; /* Light brown hover effect */
+    transform: translateY(-2px);
+}
+
+.header-button {
+    padding: 10px 20px;
+    background-color: #e0cda9; /* Light brown button */
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.header-button:hover {
+    background-color: #d2b890; /* Slightly darker brown on hover */
+    transform: translateY(-2px);
+}
+
+.header .active {
+    background-color: #e0cda9; /* Highlight active link */
+    color: #fff;
 }
 
 .footer {
@@ -66,92 +117,113 @@ h1 {
 
 /* Footer Styles */
 .footer {
-    background-color: #333;
-    padding: 20px 0;
-    text-align: center;
+    background: #fdf5e6; /* Soft cream background */
+    padding: 40px 20px;
+    color: #333; /* Dark text for contrast */
+    font-family: 'Roboto', sans-serif;
 }
 
 .footer-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
     max-width: 1200px;
     margin: 0 auto;
+    gap: 20px;
 }
 
 .footer-about,
 .footer-contact,
 .footer-nav {
     flex: 1;
+    min-width: 250px;
     margin: 10px;
+    text-align: left;
 }
 
 .footer-logo img {
     max-width: 150px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .footer h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0cda9; /* Light brown accent */
+    padding-bottom: 10px;
 }
 
 .footer p {
-    font-size: 1em;
-    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555; /* Medium gray for softer text */
 }
 
 .contact-buttons {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
 }
 
 .contact-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 5px 0;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 30px;
     text-decoration: none;
     color: #fff;
-    font-size: 1em;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .facebook-button {
-    background-color: #3b5998;
+    background-color: #3b5998; /* Facebook blue */
 }
 
 .instagram-button {
-    background-color: #a042ba;
+    background-color: #e4405f; /* Instagram pink */
 }
 
 .email-button {
-    background-color: #1e5f4a;
+    background-color: #28a745; /* Green for email */
+}
+
+.contact-button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
 .footer-buttons {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 10px;
 }
 
 .footer-button {
-    margin: 5px 0;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 30px;
     text-decoration: none;
-    color: #fff;
-    background-color: #333;
-    font-size: 1em;
+    color: #333; /* Dark text for contrast */
+    background-color: #f5e8d3; /* Lighter cream for buttons */
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-button:hover {
+    background-color: #e0cda9; /* Light brown accent on hover */
+    transform: translateY(-3px);
 }
 
 .footer-bottom {
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #ffffff;
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555; /* Medium gray */
+    border-top: 1px solid #e0cda9; /* Light brown accent */
+    padding-top: 20px;
 }
