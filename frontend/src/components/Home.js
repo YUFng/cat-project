@@ -19,13 +19,13 @@ function Home() {
             desc: 'Beautiful floral arrangement perfect for rustic-themed weddings.',
         },
         {
-            image: 'images/tableware.jpg',
+            image: 'images/elegant_tableware_set.jpg',
             title: 'Elegant Tableware Set',
             price: '$45.99',
             desc: 'Sophisticated tableware for a truly elegant event.',
         },
         {
-            image: 'images/custombanner.jpg',
+            image: 'images/custom_banner.jpg',
             title: 'Custom Banner',
             price: '$15.99',
             desc: 'Personalized banner for your special event.',

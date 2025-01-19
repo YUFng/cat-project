@@ -5,17 +5,17 @@ const AboutUs = () => {
     const members = [
         {
             name: 'Queek Yu Feng',
-            position: 'Team Leader',
+            position: 'Web Developer',
             image: '/images/yf-pic.jpg', // Replace with actual image path
         },
         {
             name: 'Shivabala A/L Ganeish',
-            position: 'GUI Developer',
+            position: 'Web Designer',
             image: '/images/shiva-pic.jpg', // Replace with actual image path
         },
         {
             name: 'Pavithran A/L Muthiah',
-            position: 'Content Creator Developer',
+            position: 'UX Designer',
             image: '/images/pavi-pic.jpg', // Replace with actual image path
         },
     ];

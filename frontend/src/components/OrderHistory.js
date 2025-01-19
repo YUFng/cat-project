@@ -41,12 +41,14 @@ function OrderHistory() {
                     {orders.map(order => (
                         <div key={order.id} className="order-card">
                             <p><strong>Order ID:</strong> {order.id}</p>
-                            <p><strong>Products:</strong></p>
-                            <ul>
-                                {order.products.map(product => (
-                                    <li key={product.id}>{product.name} - ${product.price.toFixed(2)}</li>
-                                ))}
-                            </ul>
+                            <div className="products-container">
+                                <p><strong>Products:</strong></p>
+                                <ul>
+                                    {order.products.map(product => (
+                                        <li key={product.id}>{product.name} - ${product.price.toFixed(2)}</li>
+                                    ))}
+                                </ul>
+                            </div>
                             <p><strong>Total Price:</strong> ${order.products.reduce((total, product) => total + product.price, 0).toFixed(2)}</p>
                         </div>
                     ))}

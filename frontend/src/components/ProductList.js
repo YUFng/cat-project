@@ -80,7 +80,7 @@ function ProductList() {
     });
 
     return (
-        <div className="container">
+        <div className="product-list-container">
             <h2>Product List</h2>
             <div className="search-bar">
                 <input
@@ -101,7 +101,7 @@ function ProductList() {
                     filteredProducts.map(product => (
                         <div key={product.id} className="product-card">
                             <img src={product.image} alt={product.name} className="product-image" />
-                            <h2>{product.name}</h2>
+                            <h3>{product.name}</h3>
                             <p>Price: ${product.price.toFixed(2)}</p>
                             <p>Category: {product.category}</p>
                             <p>Inventory: {product.inventory}</p>
