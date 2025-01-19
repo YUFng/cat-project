@@ -91,7 +91,6 @@
 
 .pay-now-button:hover {
     background-color: #45a049;
-<<<<<<< HEAD
 }
 
 .back-button {
@@ -110,7 +109,6 @@
 
 .back-button:hover {
     background-color: #d2cc50;
-=======
     transform: scale(1.05);
 }
 
@@ -175,5 +173,4 @@ select:focus {
     text-align: center;
     line-height: 1.6;
     margin: 10px 0;
->>>>>>> 183408a277017324bde4f69282c2e01ae2d6ee54
 }
